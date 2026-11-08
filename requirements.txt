@@ -1,0 +1,6 @@
+pillow
+numpy
+opencv-python-headless
+rapidfuzz
+pymupdf
+python-docx

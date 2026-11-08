@@ -1,0 +1,1 @@
+sample.html / sample.docx / sample.json: a proofread report made offline by `python3 -m hebocr proofread` for two held-out scan pages (25 and 45) of Teshuvah MeAhavah vol. 2 (Prague 1815 scan vs the Mechon Netzach Yakov typed edition). Open sample.html in a browser; click a mark to see its scan line.

@@ -1,0 +1,1957 @@
+{
+"flags": [
+{
+"kind": "changed",
+"typed": "גם",
+"original": "לם",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1505,
+456,
+2607,
+525
+],
+"j": 19068
+},
+{
+"kind": "changed",
+"typed": "אחורי",
+"original": "אסורי",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1511,
+583,
+2605,
+668
+],
+"j": 19089
+},
+{
+"kind": "changed",
+"typed": "פלעקלש",
+"original": "פלעקלשם טם גליון סעיף מ״א בהגהות רמ״א או זכתה אין מחויבין עוד לקדשו עכ״ל דוקא אם זינתה בזיקת נשואין או איר סין אפי׳ בזה אין נוהגין כן כ״כ בשכ״ג ואלי׳ זוטא ולענ״ד במלתא",
+"conf": 0.27,
+"level": "sure",
+"votes": "3/3",
+"page": 0,
+"box": [
+1478,
+678,
+1973,
+798
+],
+"j": 19097
+},
+{
+"kind": "changed",
+"typed": "ש\"ך",
+"original": "ש״ד",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1500,
+1015,
+2598,
+1091
+],
+"j": 19107
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "כ״ג",
+"conf": 0.09,
+"level": "low",
+"votes": "3/3",
+"page": 0,
+"box": [
+1499,
+1078,
+2593,
+1150
+],
+"j": 19112
+},
+{
+"kind": "changed",
+"typed": "או",
+"original": "מו",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1490,
+1261,
+2588,
+1334
+],
+"j": 19142
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "בחלק שני טי",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1495,
+1323,
+2584,
+1393
+],
+"j": 19162
+},
+{
+"kind": "changed",
+"typed": "להורות.* מג\"א",
+"original": "להירות ע שם גליון במג״א",
+"conf": 0.23,
+"level": "sure",
+"votes": "3/3",
+"page": 0,
+"box": [
+1692,
+1385,
+2460,
+1454
+],
+"j": 19167
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "מחללת וכו׳",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1454,
+1445,
+2576,
+1515
+],
+"j": 19170
+},
+{
+"kind": "changed",
+"typed": "הנ\"ל,",
+"original": "הכ״ל",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1447,
+1867,
+2578,
+1938
+],
+"j": 19257
+},
+{
+"kind": "changed",
+"typed": "דבשריפה",
+"original": "דבשר פה",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 0,
+"box": [
+1447,
+1867,
+2578,
+1938
+],
+"j": 19261
+},
+{
+"kind": "changed",
+"typed": "משכחת,",
+"original": "שכחת",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1484,
+1922,
+2549,
+1991
+],
+"j": 19263
+},
+{
+"kind": "changed",
+"typed": "לא",
+"original": "לאו",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1484,
+1922,
+2549,
+1991
+],
+"j": 19266
+},
+{
+"kind": "changed",
+"typed": "וליכא",
+"original": "ול כא",
+"conf": 0.09,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1461,
+1981,
+2580,
+2059
+],
+"j": 19274
+},
+{
+"kind": "changed",
+"typed": "דאזלינן",
+"original": "דאזל נן",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1461,
+1981,
+2580,
+2059
+],
+"j": 19276
+},
+{
+"kind": "changed",
+"typed": "בנשרפים,",
+"original": "בשרפים",
+"conf": 0.07,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1473,
+2224,
+2571,
+2302
+],
+"j": 19316
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "שנתרזק",
+"conf": 0.01,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1445,
+2283,
+2567,
+2363
+],
+"j": 19324
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "כלן",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1445,
+2283,
+2567,
+2363
+],
+"j": 19330
+},
+{
+"kind": "changed",
+"typed": "מוציאין",
+"original": "מוכיאין",
+"conf": 0.05,
+"level": "low",
+"votes": "3/3",
+"page": 0,
+"box": [
+1645,
+2420,
+2566,
+2487
+],
+"j": 19345
+},
+{
+"kind": "changed",
+"typed": "ודוק.*",
+"original": "דוק:",
+"conf": 0.04,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1645,
+2420,
+2566,
+2487
+],
+"j": 19350
+},
+{
+"kind": "changed",
+"typed": "מתברך",
+"original": "מתברר׳",
+"conf": 0.12,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1465,
+2532,
+2568,
+2599
+],
+"j": 19361
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ר",
+"conf": 0.05,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1465,
+2532,
+2568,
+2599
+],
+"j": 19369
+},
+{
+"kind": "changed",
+"typed": "ישראל,",
+"original": "ישר",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1493,
+2654,
+2565,
+2727
+],
+"j": 19392
+},
+{
+"kind": "changed",
+"typed": "ומתוקים בקונטרס",
+"original": "ב בקונטם",
+"conf": 0.05,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1466,
+2776,
+2557,
+2896
+],
+"j": 19401
+},
+{
+"kind": "unread",
+"typed": "אכול דייך. סליק",
+"original": "ל ב ספיק",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1508,
+2852,
+2591,
+2907
+],
+"j": 19411
+},
+{
+"kind": "changed",
+"typed": "סוף",
+"original": "סיף",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1457,
+3138,
+2380,
+3210
+],
+"j": 19431
+},
+{
+"kind": "unread",
+"typed": "אומרים אל ארך אפים. שו\"ע סימן",
+"original": "ה",
+"conf": 0.18,
+"level": "sure",
+"votes": "3/3",
+"page": 0,
+"box": [
+1632,
+3203,
+2331,
+3271
+],
+"j": 19438
+},
+{
+"kind": "extra",
+"typed": "תשובה",
+"original": "",
+"conf": 0.22,
+"level": "sure",
+"votes": "3/3",
+"page": 0,
+"box": null,
+"j": 19445
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ו",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+1459,
+3313,
+2474,
+3390
+],
+"j": 19456
+},
+{
+"kind": "changed",
+"typed": "מינץ",
+"original": "מינן",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1453,
+3380,
+2555,
+3454
+],
+"j": 19466
+},
+{
+"kind": "changed",
+"typed": "הש\"ך",
+"original": "הס״ד",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1453,
+3380,
+2555,
+3454
+],
+"j": 19468
+},
+{
+"kind": "changed",
+"typed": "אני כדאי",
+"original": "חני כדי",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+1440,
+3985,
+2547,
+4065
+],
+"j": 19554
+},
+{
+"kind": "changed",
+"typed": "לעצמי",
+"original": "לעמי",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+1440,
+3985,
+2547,
+4065
+],
+"j": 19561
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ל רה רכה רכט מאהבהחאש",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+2315,
+4160,
+2332,
+4168
+],
+"j": 19575
+},
+{
+"kind": "changed",
+"typed": "יקיצו",
+"original": "ב",
+"conf": 0.04,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+368,
+584,
+1438,
+703
+],
+"j": 19598
+},
+{
+"kind": "extra",
+"typed": "אמן.",
+"original": "",
+"conf": 0.09,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": null,
+"j": 19607
+},
+{
+"kind": "changed",
+"typed": "המנהג",
+"original": "ב",
+"conf": 0.04,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+359,
+673,
+1435,
+787
+],
+"j": 19609
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "אם",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+356,
+956,
+1429,
+1026
+],
+"j": 19648
+},
+{
+"kind": "changed",
+"typed": "קל\"ב",
+"original": "תל״ב",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+311,
+1072,
+1422,
+1148
+],
+"j": 19670
+},
+{
+"kind": "changed",
+"typed": "יכול",
+"original": "יכו",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+371,
+1199,
+1422,
+1260
+],
+"j": 19702
+},
+{
+"kind": "changed",
+"typed": "דבן",
+"original": "דשן",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+342,
+1672,
+1333,
+1751
+],
+"j": 19777
+},
+{
+"kind": "changed",
+"typed": "תיכף",
+"original": "תוכף",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+320,
+1989,
+1424,
+2050
+],
+"j": 19831
+},
+{
+"kind": "changed",
+"typed": "אונן",
+"original": "חונן",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+331,
+2041,
+1408,
+2111
+],
+"j": 19847
+},
+{
+"kind": "changed",
+"typed": "נ\"ל,",
+"original": "כ״ל",
+"conf": 0.12,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+329,
+2098,
+1407,
+2171
+],
+"j": 19852
+},
+{
+"kind": "changed",
+"typed": "בחול",
+"original": "צחול",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+328,
+2162,
+1403,
+2231
+],
+"j": 19862
+},
+{
+"kind": "changed",
+"typed": "כשיש",
+"original": "כשים",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+335,
+2217,
+1401,
+2291
+],
+"j": 19874
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ל״ג",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+322,
+2457,
+1391,
+2532
+],
+"j": 19920
+},
+{
+"kind": "changed",
+"typed": "נקבר",
+"original": "כקבר",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+349,
+2641,
+1388,
+2710
+],
+"j": 19949
+},
+{
+"kind": "changed",
+"typed": "גיהנם,",
+"original": "גיהנ",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+349,
+2641,
+1388,
+2710
+],
+"j": 19953
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "אות ב׳",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+315,
+2755,
+1389,
+2832
+],
+"j": 19967
+},
+{
+"kind": "changed",
+"typed": "שנ\"ח",
+"original": "שכ״ח",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+294,
+2999,
+1388,
+3074
+],
+"j": 20013
+},
+{
+"kind": "changed",
+"typed": "ועידן.",
+"original": "וענהן",
+"conf": 0.05,
+"level": "low",
+"votes": "3/3",
+"page": 0,
+"box": [
+294,
+2999,
+1388,
+3074
+],
+"j": 20023
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ל״ט",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+312,
+3067,
+1387,
+3136
+],
+"j": 20031
+},
+{
+"kind": "changed",
+"typed": "נידון",
+"original": "כ דון",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+312,
+3067,
+1387,
+3136
+],
+"j": 20033
+},
+{
+"kind": "changed",
+"typed": "גיהנם,",
+"original": "גיהכם",
+"conf": 0.04,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+294,
+3239,
+1418,
+3315
+],
+"j": 20058
+},
+{
+"kind": "changed",
+"typed": "יש",
+"original": "ים",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+303,
+3428,
+1378,
+3499
+],
+"j": 20099
+},
+{
+"kind": "changed",
+"typed": "ביום,",
+"original": "ביו",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+323,
+3478,
+1416,
+3552
+],
+"j": 20111
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "וש״א",
+"conf": 0.09,
+"level": "low",
+"votes": "3/3",
+"page": 0,
+"box": [
+262,
+3603,
+1378,
+3672
+],
+"j": 20130
+},
+{
+"kind": "changed",
+"typed": "ועוד,",
+"original": "ועור",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+298,
+3729,
+1375,
+3801
+],
+"j": 20152
+},
+{
+"kind": "changed",
+"typed": "ויו\"ט",
+"original": "ו״פ",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 0,
+"box": [
+296,
+3845,
+1376,
+3929
+],
+"j": 20173
+},
+{
+"kind": "changed",
+"typed": "עליו.",
+"original": "עלי",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 0,
+"box": [
+290,
+3955,
+1374,
+4032
+],
+"j": 20185
+},
+{
+"kind": "changed",
+"typed": "י\"ב",
+"original": "״ב",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 0,
+"box": [
+295,
+4024,
+1382,
+4095
+],
+"j": 20201
+},
+{
+"kind": "changed",
+"typed": "כן",
+"original": "בן",
+"conf": 0.12,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1502,
+597,
+2608,
+677
+],
+"j": 42231
+},
+{
+"kind": "changed",
+"typed": "להלוך",
+"original": "להלוד",
+"conf": 0.06,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+1503,
+656,
+2591,
+739
+],
+"j": 42235
+},
+{
+"kind": "changed",
+"typed": "פרצות",
+"original": "מר״ות",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1500,
+782,
+2597,
+850
+],
+"j": 42255
+},
+{
+"kind": "changed",
+"typed": "כרמלית",
+"original": "כרמל ת",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1500,
+782,
+2597,
+850
+],
+"j": 42257
+},
+{
+"kind": "changed",
+"typed": "לא",
+"original": "נא",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1500,
+906,
+2594,
+984
+],
+"j": 42277
+},
+{
+"kind": "changed",
+"typed": "ומגילה וכדומה",
+"original": "ומג לה ובדומה",
+"conf": 0.07,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1497,
+966,
+2595,
+1043
+],
+"j": 42297
+},
+{
+"kind": "changed",
+"typed": "חשש",
+"original": "חמש",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1499,
+1093,
+2592,
+1155
+],
+"j": 42309
+},
+{
+"kind": "changed",
+"typed": "מקום",
+"original": "מתום",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1493,
+1218,
+2586,
+1290
+],
+"j": 42333
+},
+{
+"kind": "changed",
+"typed": "השבת,",
+"original": "ההבת",
+"conf": 0.06,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+1493,
+1218,
+2586,
+1290
+],
+"j": 42337
+},
+{
+"kind": "changed",
+"typed": "יען",
+"original": "ען",
+"conf": 0.03,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1492,
+1275,
+2586,
+1350
+],
+"j": 42344
+},
+{
+"kind": "changed",
+"typed": "אצל",
+"original": "אל",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1496,
+1398,
+2582,
+1472
+],
+"j": 42362
+},
+{
+"kind": "changed",
+"typed": "ויעיין",
+"original": "ויע ין",
+"conf": 0.09,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+1486,
+1463,
+2587,
+1531
+],
+"j": 42371
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "רי״ע",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1495,
+1523,
+2844,
+1594
+],
+"j": 42396
+},
+{
+"kind": "changed",
+"typed": "בלשונם הנ\"ל",
+"original": "בלשוכ׳ הכ״ל",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1485,
+1645,
+2843,
+1713
+],
+"j": 42415
+},
+{
+"kind": "changed",
+"typed": "שאין",
+"original": "שחין",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1488,
+1763,
+2582,
+1834
+],
+"j": 42436
+},
+{
+"kind": "changed",
+"typed": "טרודים",
+"original": "ערודים",
+"conf": 0.04,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1498,
+2064,
+2600,
+2137
+],
+"j": 42494
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "מ״ט",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1501,
+2133,
+2589,
+2194
+],
+"j": 42507
+},
+{
+"kind": "changed",
+"typed": "דברים",
+"original": "דברי ברש״י",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1488,
+2189,
+2587,
+2257
+],
+"j": 42520
+},
+{
+"kind": "changed",
+"typed": "ויעיי\"ש",
+"original": "ויעיו״ש׳",
+"conf": 0.03,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1559,
+2249,
+2584,
+2311
+],
+"j": 42528
+},
+{
+"kind": "changed",
+"typed": "של",
+"original": "שא",
+"conf": 0.04,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1559,
+2249,
+2584,
+2311
+],
+"j": 42530
+},
+{
+"kind": "changed",
+"typed": "נ\"ע",
+"original": "כ״ע",
+"conf": 0.08,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1492,
+2308,
+2464,
+2380
+],
+"j": 42539
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "י״ח",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1480,
+2371,
+2579,
+2441
+],
+"j": 42546
+},
+{
+"kind": "changed",
+"typed": "מילה",
+"original": "מ לה",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+1489,
+2730,
+2834,
+2805
+],
+"j": 42606
+},
+{
+"kind": "changed",
+"typed": "בלילה, ובני",
+"original": "בל לה ובכי",
+"conf": 0.09,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+1500,
+2852,
+2583,
+2925
+],
+"j": 42628
+},
+{
+"kind": "changed",
+"typed": "משום",
+"original": "משים",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1483,
+3342,
+2584,
+3405
+],
+"j": 42727
+},
+{
+"kind": "changed",
+"typed": "בטרדה",
+"original": "בטררה",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1483,
+3342,
+2584,
+3405
+],
+"j": 42731
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ו",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1495,
+3524,
+2834,
+3600
+],
+"j": 42765
+},
+{
+"kind": "changed",
+"typed": "או ברכתו.",
+"original": "ב ל",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1991,
+3662,
+2825,
+3712
+],
+"j": 42788
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ן",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1492,
+3770,
+2819,
+3834
+],
+"j": 42799
+},
+{
+"kind": "changed",
+"typed": "מפרש",
+"original": "מפר",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+1487,
+3951,
+2583,
+4029
+],
+"j": 42843
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "חקפ״ח",
+"conf": 0.01,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+1480,
+4200,
+2573,
+4278
+],
+"j": 42876
+},
+{
+"kind": "extra",
+"typed": "פדוואה",
+"original": "",
+"conf": 0.22,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": null,
+"j": 42880
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "ז זרמר יאתהסח י",
+"conf": 0.02,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+438,
+464,
+1460,
+580
+],
+"j": 42884
+},
+{
+"kind": "changed",
+"typed": "שייך",
+"original": "שייר",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+373,
+849,
+1442,
+930
+],
+"j": 42928
+},
+{
+"kind": "changed",
+"typed": "הר\"ן",
+"original": "דר״ן",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+373,
+849,
+1442,
+930
+],
+"j": 42938
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "וכתי׳",
+"conf": 0.09,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+368,
+1034,
+1447,
+1112
+],
+"j": 42972
+},
+{
+"kind": "changed",
+"typed": "תקיעות",
+"original": "תק עות",
+"conf": 0.1,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+366,
+1093,
+1432,
+1166
+],
+"j": 42981
+},
+{
+"kind": "changed",
+"typed": "ואי",
+"original": "(אי",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+365,
+1160,
+1430,
+1218
+],
+"j": 42994
+},
+{
+"kind": "changed",
+"typed": "בשבת",
+"original": "ששבת",
+"conf": 0.09,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+363,
+1223,
+1428,
+1292
+],
+"j": 43002
+},
+{
+"kind": "changed",
+"typed": "נפקא מינא",
+"original": "כ״מ",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+364,
+1338,
+1432,
+1411
+],
+"j": 43026
+},
+{
+"kind": "changed",
+"typed": "האלו,",
+"original": "האל אי",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+364,
+1338,
+1432,
+1411
+],
+"j": 43031
+},
+{
+"kind": "changed",
+"typed": "דלכך",
+"original": "דלכר",
+"conf": 0.06,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+364,
+1338,
+1432,
+1411
+],
+"j": 43034
+},
+{
+"kind": "extra",
+"typed": "פאדוואה",
+"original": "",
+"conf": 0.21,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": null,
+"j": 43085
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "קשה",
+"conf": 0.03,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+359,
+1820,
+1433,
+1889
+],
+"j": 43108
+},
+{
+"kind": "changed",
+"typed": "ממה נפשך.",
+"original": "ממ״כ",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+359,
+1881,
+1447,
+1949
+],
+"j": 43122
+},
+{
+"kind": "changed",
+"typed": "כתירוץ",
+"original": "כתי",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+359,
+1881,
+1447,
+1949
+],
+"j": 43125
+},
+{
+"kind": "changed",
+"typed": "איכא",
+"original": "א כא",
+"conf": 0.09,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+360,
+2000,
+1431,
+2066
+],
+"j": 43140
+},
+{
+"kind": "changed",
+"typed": "כנ\"ל,",
+"original": "ככ״ל",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+360,
+2000,
+1431,
+2066
+],
+"j": 43142
+},
+{
+"kind": "changed",
+"typed": "תלמידים.",
+"original": "ל",
+"conf": 0.12,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+615,
+2121,
+1428,
+2190
+],
+"j": 43152
+},
+{
+"kind": "changed",
+"typed": "הרמב\"ם",
+"original": "הפמב״ם",
+"conf": 0.06,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+350,
+2600,
+1421,
+2669
+],
+"j": 43230
+},
+{
+"kind": "missing",
+"typed": "",
+"original": "מן מאמר ס״ד עד",
+"conf": 0.11,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+346,
+2910,
+1425,
+2977
+],
+"j": 43280
+},
+{
+"kind": "changed",
+"typed": "בס\"ד.",
+"original": "בל י",
+"conf": 0.13,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+877,
+2983,
+1444,
+3032
+],
+"j": 43285
+},
+{
+"kind": "changed",
+"typed": "הפקרות",
+"original": "הפקרו",
+"conf": 0.06,
+"level": "low",
+"votes": "3/3",
+"page": 1,
+"box": [
+349,
+3085,
+1422,
+3153
+],
+"j": 43304
+},
+{
+"kind": "changed",
+"typed": "ודעת חבירי",
+"original": "ודעתי חבורי",
+"conf": 0.15,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+350,
+3217,
+1420,
+3272
+],
+"j": 43321
+},
+{
+"kind": "changed",
+"typed": "ליום",
+"original": "לו",
+"conf": 0.04,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+358,
+3502,
+1419,
+3590
+],
+"j": 43365
+},
+{
+"kind": "changed",
+"typed": "כתב",
+"original": "כתבי",
+"conf": 0.05,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+358,
+3502,
+1419,
+3590
+],
+"j": 43368
+},
+{
+"kind": "changed",
+"typed": "נעולות",
+"original": "נעונות",
+"conf": 0.03,
+"level": "low",
+"votes": "2/3",
+"page": 1,
+"box": [
+358,
+3502,
+1419,
+3590
+],
+"j": 43381
+},
+{
+"kind": "extra",
+"typed": "ב\"ה, ראש חדש אב תקע\"א לפ\"ק, פראג מלך אדון לכל השלום, יפרוש סוכת שלומו על איש שלם בחכמה ובמדע, ה\"ה כבוד ידיד נפשי הרב המאור החריף הגדול חתני ומחמד עיני מו\"ה איצק נ\"י, ולמחברתו הרבנית ויוצאי חלציהם יחי' חיים טובים וארוכים וברוכים אמן. הן היום אשלם נדרי אשר נדרתי בשובי לביתי בשלום מן המרחץ טעפליץ, להשיב על שאלתו שאלת חכם, אבל לא בדרכי פלפול, כי אין כחי עתה ככחי אז בירחי קדם לעיין וללון לינות הרבה בעומקא של הלכה, ואף לינה אחת לא אוכל עוד, ועניני מחיצות עניני עמוקים ורחבים מאוד, ואני לא עסקתי בהם זה קרוב עשרים שנה, גם רבו טרדותי בגו ביתא ובי דינא, אחריות דנפשי ואחריות דאחרינא, ונוסף לזה הגיע עת דודים יום א'",
+"original": "",
+"conf": 0.29,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": null,
+"j": 43420
+},
+{
+"kind": "changed",
+"typed": "אל תנח ידי.",
+"original": "ן כעת ואתפלל על העתיד",
+"conf": 0.18,
+"level": "sure",
+"votes": "3/3",
+"page": 1,
+"box": [
+345,
+3824,
+1421,
+3917
+],
+"j": 43561
+},
+{
+"kind": "unread",
+"typed": "ואתפלל על העתיד",
+"original": "ואת ה",
+"conf": 0.06,
+"level": "low",
+"votes": "1/3",
+"page": 1,
+"box": [
+445,
+3873,
+1326,
+3957
+],
+"j": 43570
+},
+{
+"kind": "changed",
+"typed": "ידידו",
+"original": "ידידי",
+"conf": 0.14,
+"level": "check",
+"votes": "3/3",
+"page": 1,
+"box": [
+343,
+3925,
+1420,
+4001
+],
+"j": 43584
+}
+],
+"span": [
+[
+19064,
+20204
+],
+[
+42225,
+43596
+]
+]
+}
