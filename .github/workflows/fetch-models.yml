@@ -16,6 +16,7 @@ jobs:
       - name: Download the v4 models if missing
         run: |
           set -e
+          mkdir -p models
           changed=0
           for f in heb_rashi4 heb4; do
             if [ -f models/$f.traineddata ]; then echo "$f already here"; continue; fi
