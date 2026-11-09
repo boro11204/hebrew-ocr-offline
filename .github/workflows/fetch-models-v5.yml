@@ -1,0 +1,27 @@
+name: Fetch v5 Rashi model
+# heb_rashi5 (6.4 MB) is too big for the uploader used to back up this repo,
+# so this one-time workflow copies it from the live site, checks its SHA-256 and commits it.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fetch-models-v5.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download heb_rashi5 if missing
+        run: |
+          set -e
+          mkdir -p models
+          if [ -f models/heb_rashi5.traineddata ]; then echo "already here"; exit 0; fi
+          curl -fsSL -o models/heb_rashi5.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi5.traineddata
+          echo "bf8875e1029a05a9a114d07d37e7f663f58c3134d1a3dd5d7a0f86b2fb1c67e0  models/heb_rashi5.traineddata" | sha256sum -c -
+          git config user.name "boro11204"
+          git config user.email "boro11204@users.noreply.github.com"
+          git add models/heb_rashi5.traineddata
+          git commit -m "Add v5 Rashi model heb_rashi5 (fine-tuned on worn prints; Apache-2.0)"
+          git push
