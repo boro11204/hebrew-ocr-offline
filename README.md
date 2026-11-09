@@ -149,3 +149,9 @@ Why it is weak on this book: the offline OCR reads only about 74% of the words o
 - `gen_lstmf.py`, `train.sh`: Tesseract `lstmtraining` fine-tuning (about 8,000–11,000 iterations).
 - `build_lm.py`: build the word counts.
 - `harness.py`: the error-rate measure used for every number above.
+
+
+## v5 (Nov 9, 2026): worn-print Rashi model + Sefaria word model
+- `models/heb_rashi5.traineddata` (added by the fetch workflow): hr3 fine-tuned 35,000 more iterations on ~16.7k real Prague 1815 and Vilna Rashi lines, each also in 2 artificially worn copies (`training/aug2_worn.py`: about 20 kinds of wear — ink bleed, broken strokes, erosion/dilation, blur, noise, uneven light, foxing, stains with tide lines, bleed-through, scratches, press slur, skew, warp and more). Test pages were kept out.
+- `lm/sefaria_lm_words.txt`, `lm/sefaria_lm_bigrams.txt`: word and word-pair counts from public Sefaria texts (Rosh Hashana and Berakhot left out), used to re-score look-alike letters after OCR. No source text is looked up.
+- Rosh Hashana 2a test crops, browser engine: Rashi 16.4% → 14.6% wrong letters, square 4.1% → 2.8%.

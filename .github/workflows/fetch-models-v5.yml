@@ -1,6 +1,6 @@
-name: Fetch v5 Rashi model
-# heb_rashi5 (6.4 MB) is too big for the uploader used to back up this repo,
-# so this one-time workflow copies it from the live site, checks its SHA-256 and commits it.
+name: Fetch v5 files
+# heb_rashi5 (6.4 MB) and the Sefaria word list (3.7 MB) are too big for the uploader used to back up this repo,
+# so this workflow copies them from the live site, checks each SHA-256 and commits them.
 on:
   workflow_dispatch:
   push:
@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download heb_rashi5 if missing
+      - name: Download the v5 files if missing
         run: |
           set -e
-          mkdir -p models
-          if [ -f models/heb_rashi5.traineddata ]; then echo "already here"; exit 0; fi
-          curl -fsSL -o models/heb_rashi5.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi5.traineddata
-          echo "bf8875e1029a05a9a114d07d37e7f663f58c3134d1a3dd5d7a0f86b2fb1c67e0  models/heb_rashi5.traineddata" | sha256sum -c -
-          git config user.name "boro11204"
-          git config user.email "boro11204@users.noreply.github.com"
-          git add models/heb_rashi5.traineddata
-          git commit -m "Add v5 Rashi model heb_rashi5 (fine-tuned on worn prints; Apache-2.0)"
-          git push
+          changed=0
+          f=models/heb_rashi5.traineddata; if [ ! -f $f ]; then mkdir -p $(dirname $f); curl -fsSL -o $f https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi5.traineddata; echo "bf8875e1029a05a9a114d07d37e7f663f58c3134d1a3dd5d7a0f86b2fb1c67e0  $f" | sha256sum -c -; git add $f; changed=1; else echo "$f already here"; fi
+          f=lm/sefaria_lm_words.txt; if [ ! -f $f ]; then mkdir -p $(dirname $f); curl -fsSL -o $f https://hebrew-ocr.sites.tab.bot/tessdata/lm_words.txt; echo "d9092aff1471c7488948ef921a6979beda6f21d9fe4ba43bd63fc8579cfadfaa  $f" | sha256sum -c -; git add $f; changed=1; else echo "$f already here"; fi
+          if [ $changed = 1 ]; then
+            git config user.name "boro11204"
+            git config user.email "boro11204@users.noreply.github.com"
+            git commit -m "Add v5 files: heb_rashi5 Rashi model + Sefaria word list (checked by SHA-256)"
+            git push
+          fi
