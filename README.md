@@ -158,6 +158,11 @@ Why it is weak on this book: the offline OCR reads only about 74% of the words o
 - `lm/sefaria_lm_words.txt`, `lm/sefaria_lm_bigrams.txt`: word and word-pair counts from public Sefaria texts (Rosh Hashana and Berakhot left out), used to re-score look-alike letters after OCR. No source text is looked up.
 - Rosh Hashana 2a test crops, browser engine: Rashi 16.4% → 14.6% wrong letters, square 4.1% → 2.8%.
 
+## v7 (Nov 10, 2026): page cleanup on the website
+- The website (https://hebrew-ocr.sites.tab.bot) now cleans each page before reading it: it finds the main text block and its columns and drops running headers, page numbers, catchwords, margin notes and specks. It is on by default and can be turned off with the "Page cleanup" checkbox. The code is `layout.js` in the boro11204/hebrew-ocr repo. It never looks up the source text.
+- The models here are unchanged; `heb_rashi6` is still the Rashi model.
+- New test: 10 full pages of the Prague 1815 print never used in training (about 39,000 letters). Rashi mode: 52.4% → 2.2% wrong letters; Auto mode 59.4% → 9.3% (before, most of these two-column pages were read straight across both columns). Square test unchanged at 2.8%.
+
 ## v6 (Nov 10, 2026): look-alike Rashi letters
 - `models/heb_rashi6.traineddata` (added by the fetch workflow `fetch-models-v6.yml`; the website now uses it for Rashi and Auto mode): `heb_rashi5` fine-tuned on the Rashi letters it mixed up most (ב/כ, ת/ש/ט, ן/ך, כ/נ, ג/נ and others): real Prague 1815 lines weighted toward those letters, synthetic minimal-pair words in Rashi fonts with wear aimed at the strokes that tell them apart, then a low-rate pass on 2,496 extra real Vilna lines so the rest of the alphabet holds. Test pages were kept out.
 - Rosh Hashana 2a test crops, browser engine with the word model: Rashi 14.6% → 11.1% wrong letters (Auto mode 14.6% → 11.8%), square unchanged at 2.8%. Held-out real lines: 2.74% → 2.69%.
