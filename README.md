@@ -9,6 +9,7 @@ It also powers the "Engine" mode of the Hebrew OCR website: https://hebrew-ocr.s
 | Folder | What it is |
 |---|---|
 | `models/heb_rashi4.traineddata` | Tesseract model for **Rashi script**, fine-tuned on about 7,900 real printed lines |
+| `models/heb_rashi6.traineddata` | newest **Rashi script** model (v6, Nov 10, 2026), the one the website uses; see "v6" below |
 | `models/heb4.traineddata` | Tesseract model for **square script** (Gemara, sefarim), fine-tuned on real printed lines |
 | `lm/` | word and word-pair counts from 8.5 million words of Sefaria's open Hebrew texts (spelling fixes and "is this a real word" checks) |
 | `hebocr/` | the Python program: `engine.py` (OCR), `proofread.py` (compare), `corrector.py` (optional spelling fix) |
@@ -34,6 +35,7 @@ If the model files are missing:
 
 ```
 curl -L -o models/heb_rashi4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi4.traineddata
+curl -L -o models/heb_rashi6.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi6.traineddata
 curl -L -o models/heb4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb4.traineddata
 ```
 
@@ -155,3 +157,7 @@ Why it is weak on this book: the offline OCR reads only about 74% of the words o
 - `models/heb_rashi5.traineddata` (added by the fetch workflow): hr3 fine-tuned 35,000 more iterations on ~16.7k real Prague 1815 and Vilna Rashi lines, each also in 2 artificially worn copies (`training/aug2_worn.py`: about 20 kinds of wear — ink bleed, broken strokes, erosion/dilation, blur, noise, uneven light, foxing, stains with tide lines, bleed-through, scratches, press slur, skew, warp and more). Test pages were kept out.
 - `lm/sefaria_lm_words.txt`, `lm/sefaria_lm_bigrams.txt`: word and word-pair counts from public Sefaria texts (Rosh Hashana and Berakhot left out), used to re-score look-alike letters after OCR. No source text is looked up.
 - Rosh Hashana 2a test crops, browser engine: Rashi 16.4% → 14.6% wrong letters, square 4.1% → 2.8%.
+
+## v6 (Nov 10, 2026): look-alike Rashi letters
+- `models/heb_rashi6.traineddata` (added by the fetch workflow `fetch-models-v6.yml`; the website now uses it for Rashi and Auto mode): `heb_rashi5` fine-tuned on the Rashi letters it mixed up most (ב/כ, ת/ש/ט, ן/ך, כ/נ, ג/נ and others): real Prague 1815 lines weighted toward those letters, synthetic minimal-pair words in Rashi fonts with wear aimed at the strokes that tell them apart, then a low-rate pass on 2,496 extra real Vilna lines so the rest of the alphabet holds. Test pages were kept out.
+- Rosh Hashana 2a test crops, browser engine with the word model: Rashi 14.6% → 11.1% wrong letters (Auto mode 14.6% → 11.8%), square unchanged at 2.8%. Held-out real lines: 2.74% → 2.69%.
