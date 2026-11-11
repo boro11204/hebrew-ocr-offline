@@ -9,13 +9,13 @@
 <meta property="og:description" content="Photo or PDF in, Hebrew text out. Runs entirely in your browser with our trained models. No AI, no API key.">
 <meta name="theme-color" content="#1f3a5f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f3a5f'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle' fill='%23f4d58d' font-family='serif'%3E%D7%90%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <header class="top">
   <div class="wrap top-in">
     <div class="brand"><span class="logo">א</span><div><h1>Hebrew OCR</h1><p>Trained models only · no AI · no API key</p></div></div>
-    <a class="ghost btnlink" href="offline.html">⬇ Download the offline tool</a>
+    <div class="row"><a class="ghost btnlink" href="#compareCard">⇄ Compare</a><a class="ghost btnlink" href="offline.html">⬇ Download the offline tool</a></div>
   </div>
 </header>
 
@@ -76,6 +76,7 @@
   <section id="resultsCard" class="card hidden">
     <div class="step-h between"><div class="row"><span class="num">✓</span><h2>Text</h2></div>
       <div class="row wrap-row">
+        <button id="btnCompareOcr" class="ghost small" title="Compare this text with another text or edition">⇄ Compare with another text</button>
         <button id="btnCopyAll" class="ghost small">Copy all</button>
         <button id="btnTxt" class="ghost small">Download .txt</button>
         <button id="btnDocx" class="primary small">Download Word (.docx)</button>
@@ -96,6 +97,46 @@
     <p>Want to read whole books on your own computer, or proofread a typed text against the scan? The same trained models come as a free command-line tool.</p>
     <p><a class="primary btnlink" href="offline.html">Download the offline tool</a></p>
   </section>
+
+  <!-- COMPARE (v13, at the bottom) -->
+  <section class="card" id="compareCard">
+    <div class="step-h"><span class="num">⇄</span><h2>Compare</h2></div>
+    <p class="muted small">Put in two Hebrew texts, for example the OCR result and an updated text or another edition, and see exactly where they differ: word by word, with the different letters marked. This only shows the differences; it never changes your OCR text. Runs in your browser, no AI.</p>
+    <div class="cmp-in">
+      <div class="cmp-box">
+        <div class="row between wrap-row"><b>Text A <span class="muted small">(e.g. the OCR result)</span></b>
+          <span class="row wrap-row"><button id="cmpUseOcr" class="ghost small" type="button">Use OCR result</button><label class="ghost small camera filebtn"><input id="cmpFileA" type="file" accept=".txt,text/plain">Load .txt</label></span></div>
+        <textarea id="cmpA" class="cmp-ta" dir="rtl" lang="he" spellcheck="false" placeholder="הדבק כאן טקסט א׳ — Paste Text A here, or press Use OCR result"></textarea>
+      </div>
+      <div class="cmp-box">
+        <div class="row between wrap-row"><b>Text B <span class="muted small">(updated text / other edition)</span></b>
+          <span class="row wrap-row"><label class="ghost small camera filebtn"><input id="cmpFileB" type="file" accept=".txt,text/plain">Load .txt</label></span></div>
+        <textarea id="cmpB" class="cmp-ta" dir="rtl" lang="he" spellcheck="false" placeholder="הדבק כאן טקסט ב׳ — Paste Text B here, or load a .txt file"></textarea>
+      </div>
+    </div>
+    <div class="cmp-opts">
+      <label class="chk"><input type="checkbox" id="cmpNikud" checked> Ignore nikud &amp; te'amim</label>
+      <label class="chk"><input type="checkbox" id="cmpPunct"> Ignore punctuation (. , : ״ ׳ ־ …)</label>
+      <label class="chk"><input type="checkbox" id="cmpSpace" checked> Ignore spacing &amp; line breaks</label>
+      <label class="chk"><input type="checkbox" id="cmpLabels" checked> Ignore page / section labels (<bdi dir="rtl">[[רש״י]]</bdi>, <bdi dir="rtl">=== עמוד ===</bdi>)</label>
+    </div>
+    <div class="row wrap-row">
+      <button id="cmpRun" class="primary big" type="button">Compare</button>
+      <button id="cmpSwap" class="ghost small" type="button">⇅ Swap A and B</button>
+      <button id="cmpClear" class="ghost small danger" type="button">Clear</button>
+    </div>
+    <p id="cmpMsg" class="msg" role="status"></p>
+    <div id="cmpResult" class="hidden">
+      <p id="cmpSummary" class="cmp-sum"></p>
+      <div class="cmp-bar">
+        <div class="row"><button id="cmpPrev" class="ghost small" type="button" aria-label="Previous difference">▲ Previous</button><span id="cmpPos" class="muted small"></span><button id="cmpNext" class="primary small" type="button" aria-label="Next difference">Next ▼</button></div>
+        <div class="row wrap-row"><button id="cmpHtml" class="ghost small" type="button">Download report (.html)</button><button id="cmpTxt" class="ghost small" type="button">Download report (.txt)</button></div>
+      </div>
+      <div class="legend small"><del>removed: only in A</del> <ins>added: in B</ins> <span class="muted">Darker letters = the exact letters that differ. Tap a difference to select it.</span></div>
+      <div id="cmpOut" class="cmp-out" dir="rtl" lang="he"></div>
+      <details id="cmpListBox" class="howto" open><summary>List of differences (tap one to jump to it)</summary><ol id="cmpList" class="cmp-list"></ol></details>
+    </div>
+  </section>
 </main>
 
 <footer class="wrap foot">
@@ -104,6 +145,7 @@
 </footer>
 
 <dialog id="zoom"><img id="zoomImg" alt="Page"><button id="zoomClose" class="primary small">Close</button></dialog>
-<script type="module" src="app.js?v=12"></script>
+<script type="module" src="app.js?v=13"></script>
+<script type="module" src="compare.js?v=13"></script>
 </body>
 </html>

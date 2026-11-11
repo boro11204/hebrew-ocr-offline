@@ -1,12 +1,13 @@
 // Hebrew OCR (trained models only) — page logic. No AI, no API key: every page is read in this browser
 // by Tesseract with our fine-tuned Hebrew (heb4) and Rashi-script (heb_rashi7) models. The only network
 // requests are for this site's own files.
-import { applyOptions, allText, buildDocx, parseRange } from './core.js?v=12';
-import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=12';
+import { applyOptions, allText, buildDocx, parseRange } from './core.js?v=13';
+import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=13';
 
 const $ = s => document.querySelector(s);
 const LS = { settings: 'hocr.settings' };
 const MAX_SIDE = 3072;
+const PREVIEW_SIDE = 1600; // v13: preview kept for each PDF page after OCR
 
 // ---------------- settings ----------------
 const settings = Object.assign({ lines: 'keep', nikud: 'keep', font: 'David', script: 'mixed', straighten: true, clean: true, binarize: 'auto' }, safeJSON(localStorage.getItem(LS.settings)));
@@ -37,13 +38,16 @@ let pages = []; let seq = 0;
 const thumbs = $('#thumbs');
 function addPage(p) { p.id = ++seq; p.status = 'new'; pages.push(p); renderThumbs(); updateRunBtn(); }
 function renderThumbs() {
+  if (thumbObs) thumbObs.disconnect();
   thumbs.innerHTML = '';
   pages.forEach((p, i) => {
     const d = document.createElement('div'); d.className = 'thumb';
     const st = { done: ['✓', 'done'], err: ['!', 'err'], run: ['…', 'run'] }[p.status];
     d.innerHTML = `<img alt="">${st ? `<span class="st ${st[1]}">${st[0]}</span>` : ''}<button class="x" title="Remove">×</button><div class="cap"></div>`;
     d.querySelector('.cap').textContent = `${i + 1}. ${p.label}`;
+    d.dataset.pid = p.id;
     if (p.thumbUrl) d.querySelector('img').src = p.thumbUrl;
+    else if (p.pdf) { if (thumbObs) thumbObs.observe(d); else { thumbQ.push(p); thumbWork(); } }
     d.querySelector('.x').onclick = () => { pages = pages.filter(x => x !== p); renderThumbs(); renderResults(); updateRunBtn(); };
     thumbs.appendChild(d);
   });
@@ -80,6 +84,15 @@ async function loadPdfjs() {
   if (!pdfjs) { pdfjs = await import('./vendor/pdfjs-dist-pdf.min.mjs'); pdfjs.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdfjs-dist-pdf.worker.min.mjs', import.meta.url).href; }
   return pdfjs;
 }
+// v13 (big PDFs): read the PDF from the file in 1 MB pieces as pages need them, instead of loading
+// the whole file into memory first (a 270 MB scan used to sit in memory whole).
+async function openPdf(lib, f) {
+  if (f.size < 40e6 || !lib.PDFDataRangeTransport) return lib.getDocument({ data: await f.arrayBuffer() }).promise;
+  class FileRange extends lib.PDFDataRangeTransport {
+    requestDataRange(begin, end) { f.slice(begin, end).arrayBuffer().then(b => this.onDataRange(begin, new Uint8Array(b)), e => console.warn(e)); }
+  }
+  return lib.getDocument({ range: new FileRange(f.size, null), rangeChunkSize: 1 << 20, disableAutoFetch: true, disableStream: true }).promise;
+}
 async function renderPdfPage(doc, n, target) {
   const page = await doc.getPage(n); const v1 = page.getViewport({ scale: 1 });
   const scale = Math.min(target / Math.max(v1.width, v1.height), 6);
@@ -87,8 +100,11 @@ async function renderPdfPage(doc, n, target) {
   c.width = Math.round(v.width); c.height = Math.round(v.height);
   const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
   await page.render({ canvasContext: g, viewport: v }).promise; page.cleanup();
-  return canvasToBlob(c, target > 1000 ? 0.9 : 0.7);
+  const b = await canvasToBlob(c, target > 1000 ? 0.9 : 0.7); c.width = c.height = 0; // v13: free the canvas now, not at GC
+  return b;
 }
+// v13 (big PDFs): pdf.js keeps decoded page images in memory; let it drop them now and then
+async function pdfCleanup(doc) { try { await doc.cleanup(); } catch (e) { /* busy: next time */ } }
 
 const fileQueue = []; let pdfPending = null; let busyAdding = false;
 async function handleFiles(list) {
@@ -111,7 +127,7 @@ async function handleFiles(list) {
 }
 async function askPdf(f) {
   status(`Opening PDF ${f.name}…`);
-  const lib = await loadPdfjs(); const doc = await lib.getDocument({ data: await f.arrayBuffer() }).promise;
+  const lib = await loadPdfjs(); const doc = await openPdf(lib, f);
   if (doc.numPages === 1) return addPdfPages(f, doc, [1]);
   $('#pdfName').textContent = f.name; $('#pdfCount').textContent = doc.numPages; $('#pdfRange').value = 'all'; $('#pdfBox').classList.remove('hidden');
   status(`Choose which pages of ${f.name} to read (e.g. 1-20 or 3, 5, 9-12).`);
@@ -126,15 +142,31 @@ $('#btnPdfAdd').onclick = async () => {
 $('#btnPdfCancel').onclick = () => { if (!pdfPending) return; const { res } = pdfPending; pdfPending = null; $('#pdfBox').classList.add('hidden'); res(); };
 async function addPdfPages(f, doc, nums) {
   const base = f.name.replace(/\.pdf$/i, '');
-  const added = nums.map(n => { const p = { label: `${base} p.${n}`, pdf: doc, pdfPage: n }; addPage(p); return p; });
-  for (let i = 0; i < added.length; i++) { // thumbnails, small and quick
-    status(`Preparing PDF pages… ${i + 1}/${added.length}`);
-    try { const b = await renderPdfPage(doc, added[i].pdfPage, 260); added[i].thumbUrl = URL.createObjectURL(b); } catch (e) { console.warn(e); }
-    if (i % 6 === 5 || i === added.length - 1) renderThumbs();
-  }
+  // v13: pages are added at once; each thumbnail is drawn only when it scrolls into view (see thumbObs),
+  // so "all" on a 120-page PDF no longer decodes 120 page images up front.
+  const added = nums.map(n => ({ label: `${base} p.${n}`, pdf: doc, pdfPage: n, id: ++seq, status: 'new' }));
+  pages.push(...added); renderThumbs(); updateRunBtn();
+  status(`${added.length} page${added.length > 1 ? 's' : ''} of ${f.name} added. Press Start OCR.`);
 }
+const thumbQ = []; let thumbBusy = false;
+async function thumbWork() {
+  if (thumbBusy) return; thumbBusy = true;
+  try {
+    let k = 0;
+    while (thumbQ.length) {
+      const p = thumbQ.shift(); if (p.thumbUrl || !pages.includes(p)) continue;
+      try { const b = await renderPdfPage(p.pdf, p.pdfPage, 260); p.thumbUrl = URL.createObjectURL(b); const im = thumbs.querySelector(`[data-pid="${p.id}"] img`); if (im) im.src = p.thumbUrl; } catch (e) { console.warn(e); }
+      if (++k % 4 === 0) await pdfCleanup(p.pdf);
+      if (running) await new Promise(r => setTimeout(r, 50));
+    }
+  } finally { thumbBusy = false; }
+}
+const thumbObs = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting) { const p = pages.find(x => x.id === +e.target.dataset.pid); thumbObs.unobserve(e.target); if (p && p.pdf && !p.thumbUrl && !thumbQ.includes(p)) thumbQ.push(p); }
+  thumbWork();
+}, { rootMargin: '300px' }) : null;
 async function pageJpeg(p) {
-  if (!p.blob && p.pdf) { p.blob = await renderPdfPage(p.pdf, p.pdfPage, 2800); p.url = URL.createObjectURL(p.blob); }
+  if (!p.blob && p.pdf) { p.blob = await renderPdfPage(p.pdf, p.pdfPage, 2800); await pdfCleanup(p.pdf); } // v13: no full-size URL kept (the box shows the thumbnail, then a preview)
   return p.blob;
 }
 
@@ -155,27 +187,50 @@ function setBar() { const n = pages.length || 1; $('#bar').style.width = (100 * 
 async function pageCanvas(p) {
   const blob = await pageJpeg(p); let bmp;
   try { bmp = await createImageBitmap(blob); } catch { bmp = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = URL.createObjectURL(blob); }); }
-  return canvasFrom(bmp, bmp.width, bmp.height);
+  const c = canvasFrom(bmp, bmp.width, bmp.height); if (bmp.close) bmp.close();
+  return c;
 }
+// v13 (big PDFs): a PDF page's full-size image is rendered only when OCR reaches it, and freed right after;
+// the page keeps a small preview for its result box. "Read again" and the searchable PDF render it again.
+async function keepPreview(p, c) {
+  if (!p.pdf) return;
+  const s = Math.min(1, PREVIEW_SIDE / Math.max(c.width, c.height));
+  const pv = canvasFrom(c, Math.round(c.width * s), Math.round(c.height * s));
+  const b = await canvasToBlob(pv, 0.82); pv.width = pv.height = 0;
+  if (p.url) URL.revokeObjectURL(p.url);
+  p.url = URL.createObjectURL(b);
+  if (!p.thumbUrl) p.thumbUrl = p.url;
+}
+function freeFull(p) { if (p.pdf) p.blob = null; } // the big JPEG goes; p.url is now the preview
+let eta = '';
 async function ocrPage(p, idx) {
   p.status = 'run'; p.error = ''; p.notes = []; p.changes = []; renderThumbs();
+  let c;
   try {
-    const r = await enginePage(await pageCanvas(p), { script: settings.script, binarize: settings.binarize, straighten: settings.straighten, clean: settings.clean !== false,
-      onStatus: t => status(`Page ${idx + 1} of ${pages.length}: ${t}`) });
+    c = await pageCanvas(p); await keepPreview(p, c); freeFull(p);
+    const r = await enginePage(c, { script: settings.script, binarize: settings.binarize, straighten: settings.straighten, clean: settings.clean !== false,
+      onStatus: t => status(`Page ${idx + 1} of ${pages.length}: ${t}${eta}`) });
     p.text = r.text; p.model = 'engine'; p.status = 'done'; p.edited = false; p.notes = r.steps; p.changes = r.changes.map(c => ({ ...c, why: 'word list' }));
     p.raw = r.raw; p.lead = r.lead;
   } catch (e) { console.error(e); p.status = 'err'; p.error = 'Could not read this page: ' + (e.message || e); }
+  finally { if (c) c.width = c.height = 0; }
 }
 
+function fmtMin(s) { return s < 90 ? `${Math.max(1, Math.round(s))} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`; }
 async function run(onlyFailed = false) {
   if (running) return; running = true; stopFlag = false;
   $('#btnStop').classList.remove('hidden'); updateRunBtn();
   $('#resultsCard').classList.remove('hidden');
   const todo = pages.filter(p => onlyFailed ? p.status === 'err' : p.status !== 'done');
+  const t0 = performance.now(); let n = 0; eta = '';
   for (const p of todo) {
     if (stopFlag) break;
-    await ocrPage(p, pages.indexOf(p)); renderThumbs(); renderResults(); setBar();
+    await ocrPage(p, pages.indexOf(p)); n++; renderThumbs(); renderResults(); setBar();
+    const per = (performance.now() - t0) / 1000 / n, left = todo.length - n;
+    eta = left > 0 ? ` · ${n} of ${todo.length} done, about ${fmtMin(per * left)} left (${per.toFixed(0)} s a page)` : '';
+    if (left > 0 && !stopFlag) status(`Page ${n} of ${todo.length} read${eta}`);
   }
+  eta = '';
   running = false; $('#btnStop').classList.add('hidden');
   const done = pages.filter(p => p.status === 'done').length, err = pages.filter(p => p.status === 'err');
   if (stopFlag) status(`Paused. ${done} of ${pages.length} pages done.`, 'warn');
@@ -252,7 +307,8 @@ $('#btnPdf').onclick = async e => {
     const { PDFDocument } = await loadPdfLib(); const out = await PDFDocument.create();
     for (let i = 0; i < done.length; i++) {
       status(`Making the searchable PDF: page ${i + 1} of ${done.length}…`);
-      const bytes = await pdfPageBytes(await pageCanvas(done[i]), settings.script, t => status(t));
+      const pc = await pageCanvas(done[i]); freeFull(done[i]);
+      const bytes = await pdfPageBytes(pc, settings.script, t => status(t)); pc.width = pc.height = 0;
       const one = await PDFDocument.load(bytes); const cp = await out.copyPages(one, one.getPageIndices()); cp.forEach(pg => out.addPage(pg));
     }
     download(await out.save(), `hebrew-ocr-${stamp()}.pdf`, 'application/pdf');
@@ -262,5 +318,5 @@ $('#btnPdf').onclick = async e => {
 };
 
 // test hook (used by the automated checks; harmless)
-window.__hocr = { pages: () => pages, handleFiles, settings };
+window.__hocr = { pages: () => pages, handleFiles, settings, ocrText: () => exportPages().map(p => p.text).join('\n\n') }; // ocrText: read-only copy for the Compare tool
 showScript(); updateRunBtn();

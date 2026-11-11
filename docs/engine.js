@@ -6,7 +6,7 @@
 // line-by-line voting between them, and word-list post-correction tuned for Rashi letter confusions.
 // Everything here is plain code: no key, no server, no AI.
 
-import { cleanLayout, applyClean, cleanSummary } from './layout.js?v=12';
+import { cleanLayout, applyClean, cleanSummary } from './layout.js?v=13';
 const TESS_BASE = new URL('./vendor/tess/', import.meta.url).href;
 const LANG_BASE = new URL('./tessdata', import.meta.url).href;
 // v4 (Nov 2026): both models fine-tuned on real printed lines (Vilna Shas 1925 + Prague 1815), see github.com/boro11204/hebrew-ocr-offline
