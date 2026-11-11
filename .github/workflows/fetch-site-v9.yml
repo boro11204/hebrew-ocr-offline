@@ -1,0 +1,49 @@
+name: Fetch big files for the OCR web page (v9)
+# The OCR page in docs/ (GitHub Pages) needs the trained models, the word-frequency lists and the
+# Tesseract engine files next to it, because Pages serves only docs/. Some are too big for the uploader
+# used to back up this repo, so this workflow copies them (models/ and lm/ of this repo, or the live
+# site for the two Tesseract engine files), checks every SHA-256 and commits them into docs/.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fetch-site-v9.yml']
+permissions:
+  contents: write
+  pages: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy / download the big files and check SHA-256
+        run: |
+          set -e
+          mkdir -p docs/tessdata docs/vendor/tess
+          get() { # dest sha256 source...
+            dest=$1; sum=$2; shift 2
+            if [ -f "$dest" ] && echo "$sum  $dest" | sha256sum -c - >/dev/null 2>&1; then echo "$dest already here"; return; fi
+            for src in "$@"; do
+              case "$src" in
+                http*) curl -fsSL --retry 3 -o "$dest" "$src" || continue ;;
+                *) [ -f "$src" ] && cp "$src" "$dest" || continue ;;
+              esac
+              if echo "$sum  $dest" | sha256sum -c -; then git add "$dest"; return; fi
+            done
+            echo "FAILED: $dest"; exit 1
+          }
+          get docs/tessdata/heb_rashi7.traineddata 09f3c705586be030b036bce5f8e22076fbf90481ff5fc69c2fa17f84cfc675fd models/heb_rashi7.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi7.traineddata
+          get docs/tessdata/heb4.traineddata a1422a71e9e7d060b5cc0c08e3060cc5e7a9a9ea41ecc0da43ec07d8946769a6 models/heb4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb4.traineddata
+          get docs/tessdata/lm_words.txt d9092aff1471c7488948ef921a6979beda6f21d9fe4ba43bd63fc8579cfadfaa lm/sefaria_lm_words.txt https://hebrew-ocr.sites.tab.bot/tessdata/lm_words.txt
+          get docs/tessdata/lm_bigrams.txt 3ff45c169cb4c9bfb27c75fd8adb56577504cbee0711daf807b30f8c24498336 lm/sefaria_lm_bigrams.txt https://hebrew-ocr.sites.tab.bot/tessdata/lm_bigrams.txt
+          get docs/vendor/tess/tesseract-core-lstm.wasm.js 8f04aa0cc81e7bde33f80e92fa01a7a665f0b4884d098acf5de9c7104a11dfaa https://hebrew-ocr.sites.tab.bot/vendor/tess/tesseract-core-lstm.wasm.js https://boro11204.github.io/hebrew-ocr/vendor/tess/tesseract-core-lstm.wasm.js
+          get docs/vendor/tess/tesseract-core-simd-lstm.wasm.js ce20eda9533cbed1e6c2b4276fbae1e0adc61b6754b5513084be601787b457cf https://hebrew-ocr.sites.tab.bot/vendor/tess/tesseract-core-simd-lstm.wasm.js https://boro11204.github.io/hebrew-ocr/vendor/tess/tesseract-core-simd-lstm.wasm.js
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git config user.name "boro11204"
+          git config user.email "boro11204@users.noreply.github.com"
+          git commit -m "Add v9 files for the OCR web page: models, word lists, Tesseract engine (checked by SHA-256)"
+          for i in 1 2 3 4 5; do git push && break; sleep 5; git pull --rebase; done
+      - name: Ask GitHub Pages to rebuild
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST repos/${{ github.repository }}/pages/builds || echo "Pages rebuild request not accepted (the next push rebuilds it)"
