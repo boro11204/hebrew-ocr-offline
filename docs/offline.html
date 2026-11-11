@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hebrew OCR Offline: free Rashi and square script OCR, no AI</title>
+<meta name="description" content="Free, offline Hebrew OCR for printed seforim, in square and Rashi script, plus a proofreading tool. No AI, no API key, runs on your own computer.">
+<meta property="og:title" content="Hebrew OCR Offline">
+<meta property="og:description" content="Free, offline Hebrew OCR for printed seforim, in square and Rashi script, plus a proofreader. No AI.">
+<link rel="stylesheet" href="offline.css?v=1">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Free · Offline · No AI</p>
+    <h1>Hebrew OCR Offline</h1>
+    <p class="lead">Reads printed seforim into text, in <strong>square script and Rashi script</strong>, and <strong>proofreads</strong> a typed text against the original scan. No AI, no API key, no internet once installed. It runs on your own computer.</p>
+    <p class="he" lang="he" dir="rtl">זיהוי תווים לספרים בכתב מרובע ובכתב רש״י, בלי בינה מלאכותית</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/boro11204/hebrew-ocr-offline/archive/refs/heads/main.zip">Download (zip)</a>
+      <a class="btn ghost" href="https://github.com/boro11204/hebrew-ocr-offline">View on GitHub</a>
+      <a class="btn ghost" href="./">OCR in your browser (no install)</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="what">
+    <h2>What it is</h2>
+    <ul class="points">
+      <li><strong>OCR</strong>: turns a scan (PDF or image) into Hebrew text. Square script, Rashi script, or Auto (tries both, line by line). Handles two-column pages.</li>
+      <li><strong>Proofreader</strong>: compares a typed text (.txt, .docx or .pdf) with the scan and marks the words that differ, in an HTML report and a Word file.</li>
+      <li><strong>Models</strong>: Tesseract models fine-tuned on real printed lines from the Vilna Shas and a Prague 1815 print.</li>
+      <li>Written in Python (<code>hebocr</code>). Code under the Apache License 2.0.</li>
+    </ul>
+    <p class="note">Prefer not to install anything? The <a href="./">OCR page on this site</a> runs the same trained models right in your browser, with no AI and no API key.</p>
+  </section>
+
+  <section id="download">
+    <h2>Download</h2>
+    <p><a class="btn" href="https://github.com/boro11204/hebrew-ocr-offline/archive/refs/heads/main.zip">Whole repo as a zip</a><br><span class="muted">The program, the models and the word lists, all in one file.</span></p>
+    <p>Or each model file on its own (put them in the <code>models/</code> folder):</p>
+    <ul class="models">
+      <li class="model">
+        <div><code>heb_rashi7.traineddata</code><span class="size">6.4 MB</span><p>Rashi script, newest (v8, Nov 10, 2026). The default.</p></div>
+        <div class="btns"><a class="btn small" href="https://github.com/boro11204/hebrew-ocr-offline/raw/main/models/heb_rashi7.traineddata" download>Download</a><a class="btn small ghost" href="https://github.com/boro11204/hebrew-ocr-offline/blob/main/models/heb_rashi7.traineddata">View on GitHub</a></div>
+      </li>
+      <li class="model">
+        <div><code>heb_rashi6.traineddata</code><span class="size">6.4 MB</span><p>Rashi script, previous (v6).</p></div>
+        <div class="btns"><a class="btn small" href="https://github.com/boro11204/hebrew-ocr-offline/raw/main/models/heb_rashi6.traineddata" download>Download</a><a class="btn small ghost" href="https://github.com/boro11204/hebrew-ocr-offline/blob/main/models/heb_rashi6.traineddata">View on GitHub</a></div>
+      </li>
+      <li class="model">
+        <div><code>heb_rashi5.traineddata</code><span class="size">6.4 MB</span><p>Rashi script, worn-print model (v5).</p></div>
+        <div class="btns"><a class="btn small" href="https://github.com/boro11204/hebrew-ocr-offline/raw/main/models/heb_rashi5.traineddata" download>Download</a><a class="btn small ghost" href="https://github.com/boro11204/hebrew-ocr-offline/blob/main/models/heb_rashi5.traineddata">View on GitHub</a></div>
+      </li>
+      <li class="model">
+        <div><code>heb_rashi4.traineddata</code><span class="size">6.4 MB</span><p>Rashi script, first fine-tuned model.</p></div>
+        <div class="btns"><a class="btn small" href="https://github.com/boro11204/hebrew-ocr-offline/raw/main/models/heb_rashi4.traineddata" download>Download</a><a class="btn small ghost" href="https://github.com/boro11204/hebrew-ocr-offline/blob/main/models/heb_rashi4.traineddata">View on GitHub</a></div>
+      </li>
+      <li class="model">
+        <div><code>heb4.traineddata</code><span class="size">3.7 MB</span><p>Square script (Gemara, seforim).</p></div>
+        <div class="btns"><a class="btn small" href="https://github.com/boro11204/hebrew-ocr-offline/raw/main/models/heb4.traineddata" download>Download</a><a class="btn small ghost" href="https://github.com/boro11204/hebrew-ocr-offline/blob/main/models/heb4.traineddata">View on GitHub</a></div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p>You need Python 3.9 or newer and Tesseract 5.</p>
+<pre><code># Ubuntu / Debian
+sudo apt-get install tesseract-ocr
+# macOS
+brew install tesseract
+# Windows: install Tesseract from https://github.com/UB-Mannheim/tesseract/wiki
+
+pip install -r requirements.txt</code></pre>
+    <p>If the model files are missing:</p>
+<pre><code>curl -L -o models/heb_rashi4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi4.traineddata
+curl -L -o models/heb_rashi7.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi7.traineddata
+curl -L -o models/heb_rashi6.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi6.traineddata
+curl -L -o models/heb4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb4.traineddata</code></pre>
+  </section>
+
+  <section id="use">
+    <h2>Run it</h2>
+    <p>Run these from the repo folder (the unzipped <code>hebrew-ocr-offline-main</code> folder).</p>
+    <h3>Read a scan into text</h3>
+<pre><code>python3 -m hebocr ocr page.jpg --script rashi --out page.txt
+python3 -m hebocr ocr book.pdf --pages 1-10 --script square --layout columns --out book.txt</code></pre>
+    <ul class="opts">
+      <li><code>--script</code>: <code>rashi</code>, <code>square</code>, or <code>auto</code> (tries both, line by line).</li>
+      <li><code>--layout</code>: <code>columns</code> for two-column pages, <code>block</code> for one column, <code>auto</code> to let Tesseract decide.</li>
+      <li><code>--rashi-model</code>: which Rashi model to use (default <code>heb_rashi7</code>; <code>heb_rashi6</code> and older still work). Same as setting <code>HEBOCR_RASHI</code>.</li>
+      <li><code>--correct</code>: turns on the word-list spelling fix. It helps a little on square script and does about nothing on Rashi, so it is off by default.</li>
+    </ul>
+    <h3>Proofread a typed text against the scan</h3>
+<pre><code>python3 -m hebocr proofread typed.docx scan.pdf --pages 15-30 --out report</code></pre>
+    <p>The typed file can be <code>.txt</code>, <code>.docx</code> or <code>.pdf</code>. This writes:</p>
+    <ul class="opts">
+      <li><code>report.html</code>: the typed text with colors. Click a mark to see the scan line it came from.
+        <span class="legend"><span class="y">Yellow</span> changed word, more sure · <span class="o">Orange</span> changed word, worth checking · <span class="r">Red crossed out</span> typed words not in the scan · <span lang="he" dir="rtl">[חסר: …]</span> words in the scan missing from the typed text</span></li>
+      <li><code>report.docx</code>: the same marks in Word.</li>
+      <li><code>report.json</code>: every flag with its confidence (0 to 1).</li>
+    </ul>
+    <p class="muted">The proofreader also takes <code>--rashi-model</code>. Use <code>--sure</code> and <code>--check</code> to change how many flags you see.</p>
+  </section>
+
+  <section id="v8">
+    <h2>New in v8: heb_rashi7 <span class="date">Nov 10, 2026</span></h2>
+    <p><code>heb_rashi7</code> is <code>heb_rashi6</code> fine-tuned on <strong>24,013 new Vilna Shas Rashi and Tosafot lines</strong> (310 pages of the 1882 and 1925 Romm printings, 31 tractates), labelled from Sefaria and checked line by line. Test pages were kept out of training. It is now the default for the website and the command line.</p>
+    <div class="stats">
+      <div class="stat">
+        <p class="label">10 Prague 1815 test pages, Rashi mode</p>
+        <p class="nums"><span class="old">2.15%</span> → <span class="new">2.00%</span></p>
+        <p class="muted">letters wrong</p>
+      </div>
+      <div class="stat">
+        <p class="label">Old Rosh Hashana 2a crop, Rashi mode</p>
+        <p class="nums"><span class="old">10.56%</span> → <span class="new">9.65%</span></p>
+        <p class="muted">letters wrong</p>
+      </div>
+    </div>
+    <p class="muted">Lower is better. Nothing got worse. To switch back: <code>--rashi-model heb_rashi6</code> (or <code>HEBOCR_RASHI=heb_rashi6</code>).</p>
+  </section>
+
+  <section id="web">
+    <h2>Web version</h2>
+    <p>The same trained models in your browser, nothing to install, no AI and no API key:</p>
+    <p><a class="btn" href="./">Open the OCR page</a></p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Code: Apache License 2.0. Models fine-tuned from heb_rashi by Zeev Pekar / pninim.org and Google's tessdata_best <code>heb</code> (both Apache 2.0). Training texts from <a href="https://www.sefaria.org">Sefaria</a>; scans are public domain. Uses <a href="https://github.com/tesseract-ocr/tesseract">Tesseract OCR</a>. Full credits in the <a href="https://github.com/boro11204/hebrew-ocr-offline#licenses-and-credits">README</a>.</p>
+    <p><a href="https://github.com/boro11204/hebrew-ocr-offline">github.com/boro11204/hebrew-ocr-offline</a></p>
+  </div>
+</footer>
+</body>
+</html>
