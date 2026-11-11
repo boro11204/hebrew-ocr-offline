@@ -1,7 +1,7 @@
 
 """hebocr.engine — offline Hebrew OCR for square and Rashi script (no AI at runtime).
 
-Uses the Tesseract LSTM engine with two fine-tuned models from this repo, page layout
+Uses the Tesseract LSTM engine with fine-tuned models from this repo (Rashi: heb_rashi7 by default; square: heb4), page layout
 helpers, per-line script selection and a word-frequency spelling corrector.
 """
 import os, re, subprocess, tempfile, shutil, json
@@ -11,7 +11,21 @@ HERE=os.path.dirname(os.path.abspath(__file__))
 ROOT=os.path.dirname(HERE)
 MODELS=os.environ.get('HEBOCR_MODELS', os.path.join(ROOT,'models'))
 LMDIR=os.environ.get('HEBOCR_LM', os.path.join(ROOT,'lm'))
-RASHI='heb_rashi4'; SQUARE='heb4'
+# Rashi model: newest first. Pick another with HEBOCR_RASHI=heb_rashi6 (or --rashi-model on the command line).
+RASHI_MODELS=['heb_rashi7','heb_rashi6','heb_rashi5','heb_rashi4']
+def _pick_rashi():
+    want=os.environ.get('HEBOCR_RASHI')
+    if want: return want
+    for m in RASHI_MODELS:
+        if os.path.exists(os.path.join(MODELS,m+'.traineddata')): return m
+    return RASHI_MODELS[0]
+RASHI=_pick_rashi(); SQUARE='heb4'
+def set_rashi_model(name):
+    """Use another Rashi model for the rest of this run (e.g. 'heb_rashi6')."""
+    global RASHI
+    if not os.path.exists(os.path.join(MODELS,name+'.traineddata')):
+        raise FileNotFoundError(f'{name}.traineddata is not in {MODELS}')
+    RASHI=name
 PICK_W=float(os.environ.get('HEBOCR_PICK_W','30'))
 _HEB=re.compile(r'[\u05d0-\u05ea]')
 

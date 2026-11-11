@@ -1,1 +1,1 @@
-The two model files (heb_rashi4.traineddata, heb4.traineddata) are added here by the GitHub Action in .github/workflows/fetch-models.yml (SHA-256 checked). See the main README for licenses.
+Model files. heb_rashi7.traineddata is the default Rashi model (heb_rashi6, heb_rashi5 and heb_rashi4 stay selectable with --rashi-model or HEBOCR_RASHI); heb4.traineddata is the square-script model. The bigger files are added by the GitHub Actions in .github/workflows/ (fetch-models*.yml, each SHA-256 checked). See the main README for licenses.

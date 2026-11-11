@@ -9,7 +9,8 @@ It also powers the "Engine" mode of the Hebrew OCR website: https://hebrew-ocr.s
 | Folder | What it is |
 |---|---|
 | `models/heb_rashi4.traineddata` | Tesseract model for **Rashi script**, fine-tuned on about 7,900 real printed lines |
-| `models/heb_rashi6.traineddata` | newest **Rashi script** model (v6, Nov 10, 2026), the one the website uses; see "v6" below |
+| `models/heb_rashi7.traineddata` | newest **Rashi script** model (v8, Nov 10, 2026), the one the website and the command line use; see "v8" below |
+| `models/heb_rashi6.traineddata` | previous Rashi model (v6), still selectable with `--rashi-model heb_rashi6` |
 | `models/heb4.traineddata` | Tesseract model for **square script** (Gemara, sefarim), fine-tuned on real printed lines |
 | `lm/` | word and word-pair counts from 8.5 million words of Sefaria's open Hebrew texts (spelling fixes and "is this a real word" checks) |
 | `hebocr/` | the Python program: `engine.py` (OCR), `proofread.py` (compare), `corrector.py` (optional spelling fix) |
@@ -35,6 +36,7 @@ If the model files are missing:
 
 ```
 curl -L -o models/heb_rashi4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi4.traineddata
+curl -L -o models/heb_rashi7.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi7.traineddata
 curl -L -o models/heb_rashi6.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi6.traineddata
 curl -L -o models/heb4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb4.traineddata
 ```
@@ -52,6 +54,7 @@ python3 -m hebocr ocr book.pdf --pages 1-10 --script square --layout columns --o
 
 - `--script`: `rashi`, `square`, or `auto` (tries both, line by line).
 - `--layout`: `columns` for two-column pages, `block` for one column, `auto` to let Tesseract decide.
+- `--rashi-model`: which Rashi model to use (default `heb_rashi7`; `heb_rashi6` and older still work). Same as setting `HEBOCR_RASHI`.
 - `--correct`: turns on the word-list spelling fix. It helps a little on square script and does about nothing on Rashi, so it is off by default.
 
 **Proofread a typed text against the scan**
@@ -166,3 +169,8 @@ Why it is weak on this book: the offline OCR reads only about 74% of the words o
 ## v6 (Nov 10, 2026): look-alike Rashi letters
 - `models/heb_rashi6.traineddata` (added by the fetch workflow `fetch-models-v6.yml`; the website now uses it for Rashi and Auto mode): `heb_rashi5` fine-tuned on the Rashi letters it mixed up most (ב/כ, ת/ש/ט, ן/ך, כ/נ, ג/נ and others): real Prague 1815 lines weighted toward those letters, synthetic minimal-pair words in Rashi fonts with wear aimed at the strokes that tell them apart, then a low-rate pass on 2,496 extra real Vilna lines so the rest of the alphabet holds. Test pages were kept out.
 - Rosh Hashana 2a test crops, browser engine with the word model: Rashi 14.6% → 11.1% wrong letters (Auto mode 14.6% → 11.8%), square unchanged at 2.8%. Held-out real lines: 2.74% → 2.69%.
+
+## v8: heb_rashi7 (Nov 10, 2026)
+- `models/heb_rashi7.traineddata` (added by the fetch workflow `fetch-models-v8.yml`, SHA-256 checked): `heb_rashi6` fine-tuned on 24,013 new Vilna Shas Rashi/Tosafot lines (Rashi/Rashbam 12,472, Tosafot 11,541, from 310 pages of the 1882 and 1925 Romm printings, 31 tractates), labelled from Sefaria and checked line by line. Test pages were kept out.
+- The website now uses it for Rashi and Auto mode, and so does this command-line tool. `heb_rashi6` is still here: `--rashi-model heb_rashi6` (or `HEBOCR_RASHI=heb_rashi6`) switches back.
+- 10 Prague 1815 test pages never used in training, website with page cleanup, Rashi mode: 2.15% → 2.00% wrong letters. Old Rosh Hashana 2a crop, Rashi mode: 10.56% → 9.65%. Nothing got worse.
