@@ -174,3 +174,9 @@ Why it is weak on this book: the offline OCR reads only about 74% of the words o
 - `models/heb_rashi7.traineddata` (added by the fetch workflow `fetch-models-v8.yml`, SHA-256 checked): `heb_rashi6` fine-tuned on 24,013 new Vilna Shas Rashi/Tosafot lines (Rashi/Rashbam 12,472, Tosafot 11,541, from 310 pages of the 1882 and 1925 Romm printings, 31 tractates), labelled from Sefaria and checked line by line. Test pages were kept out.
 - The website now uses it for Rashi and Auto mode, and so does this command-line tool. `heb_rashi6` is still here: `--rashi-model heb_rashi6` (or `HEBOCR_RASHI=heb_rashi6`) switches back.
 - 10 Prague 1815 test pages never used in training, website with page cleanup, Rashi mode: 2.15% → 2.00% wrong letters. Old Rosh Hashana 2a crop, Rashi mode: 10.56% → 9.65%. Nothing got worse.
+
+## v9 (Nov 11, 2026): OCR web page with our trained models only
+
+https://boro11204.github.io/hebrew-ocr-offline/ is now a working OCR page that uses **only the trained models in this repo**: no AI, no API key, and no requests to any other site. It runs entirely in the browser (Tesseract.js with `heb_rashi7` for Rashi script and `heb4` for square letters, plus the Sefaria word lists). Pick **Auto / Rashi / Square** at the top, add a photo or PDF, and copy or download the text (TXT, Word or searchable PDF). The download page for this command-line tool moved to https://boro11204.github.io/hebrew-ocr-offline/offline.html.
+
+The page lives in `docs/`. Its big files (the models, the word lists and the two Tesseract engine files) are copied into `docs/` by `.github/workflows/fetch-site-v9.yml`, which checks every file's SHA-256.
