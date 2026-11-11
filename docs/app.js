@@ -1,8 +1,8 @@
 // Hebrew OCR (trained models only) — page logic. No AI, no API key: every page is read in this browser
 // by Tesseract with our fine-tuned Hebrew (heb4) and Rashi-script (heb_rashi7) models. The only network
 // requests are for this site's own files.
-import { applyOptions, allText, buildDocx, parseRange } from './core.js?v=13';
-import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=13';
+import { applyOptions, allText, buildDocx, parseRange } from './core.js?v=14';
+import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=14';
 
 const $ = s => document.querySelector(s);
 const LS = { settings: 'hocr.settings' };
