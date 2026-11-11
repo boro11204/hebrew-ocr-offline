@@ -1,0 +1,26 @@
+name: Fetch v8 files
+# heb_rashi7 (6.4 MB) is too big for the uploader used to back up this repo,
+# so this workflow copies it from the live site, checks its SHA-256 and commits it.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fetch-models-v8.yml']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download the v8 Rashi model (heb_rashi7) if missing
+        run: |
+          set -e
+          changed=0
+          f=models/heb_rashi7.traineddata; if [ ! -f $f ]; then mkdir -p $(dirname $f); curl -fsSL --retry 3 -o $f https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi7.traineddata; echo "09f3c705586be030b036bce5f8e22076fbf90481ff5fc69c2fa17f84cfc675fd  $f" | sha256sum -c -; git add $f; changed=1; else echo "$f already here"; fi
+          if [ $changed = 1 ]; then
+            git config user.name "boro11204"
+            git config user.email "boro11204@users.noreply.github.com"
+            git commit -m "Add v8 file: heb_rashi7 Rashi model (checked by SHA-256)"
+            git push
+          fi
