@@ -146,3 +146,19 @@ details.fixes li.chg bdi{font-family:'David','Frank Ruehl',serif;font-size:1.05r
   .cmp-out{font-size:19px;max-height:60vh;padding:10px 12px}
 }
 .legend del{text-decoration:none}
+
+.thumb .regions{width:100%;border:0;border-top:1px solid var(--line);border-radius:0;padding:4px 2px;background:#f4f7fb;color:var(--brand);font-size:12px}
+#regionDialog{width:min(900px,96vw);max-height:94vh;border:1px solid var(--line);border-radius:12px;padding:18px;color:var(--ink)}
+#regionDialog::backdrop{background:#121922aa}
+#regionDialog h2,#regionPage{margin:0}
+#regionStage{position:relative;width:fit-content;max-width:100%;margin:10px auto;cursor:crosshair;touch-action:none;user-select:none}
+#regionImage{display:block;max-width:100%;max-height:68vh;width:auto;height:auto}
+#regionBoxes{position:absolute;inset:0;pointer-events:none}
+.region-box{position:absolute;border:2px solid #184d99;background:#4c9cff20;box-shadow:0 0 0 1px white inset;text-align:left}
+.region-box b{vertical-align:top;background:#184d99;color:white;padding:0 4px;font:600 13px/1.4 system-ui}
+#regionOrder li{padding:3px 0}
+#regionOrder button{margin-inline-start:6px}
+#regionCoords{display:flex;align-items:end;gap:8px;flex-wrap:wrap}
+#regionCoords label{display:grid}
+#regionCoords input{width:5em}
+#regionMsg:empty{display:none}

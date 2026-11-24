@@ -2,7 +2,8 @@
 // by Tesseract with our fine-tuned Hebrew (heb4) and Rashi-script (heb_rashi7) models. The only network
 // requests are for this site's own files.
 import { applyOptions, allText, buildDocx, parseRange } from './core.js?v=14';
-import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=14';
+import { enginePage, pdfPageBytes, canvasFrom } from './engine.js?v=15';
+import { cropRegion, editRegions, regionHeading, regionScript } from './regions.js?v=15';
 
 const $ = s => document.querySelector(s);
 const LS = { settings: 'hocr.settings' };
@@ -35,6 +36,7 @@ for (const id of ['#linesSel', '#nikudSel']) $(id).onchange = () => {
 
 // ---------------- pages ----------------
 let pages = []; let seq = 0;
+let editingRegions = false;
 const thumbs = $('#thumbs');
 function addPage(p) { p.id = ++seq; p.status = 'new'; pages.push(p); renderThumbs(); updateRunBtn(); }
 function renderThumbs() {
@@ -45,6 +47,13 @@ function renderThumbs() {
     const st = { done: ['✓', 'done'], err: ['!', 'err'], run: ['…', 'run'] }[p.status];
     d.innerHTML = `<img alt="">${st ? `<span class="st ${st[1]}">${st[0]}</span>` : ''}<button class="x" title="Remove">×</button><div class="cap"></div>`;
     d.querySelector('.cap').textContent = `${i + 1}. ${p.label}`;
+    const regionsButton = document.createElement('button');
+    regionsButton.className = 'regions'; regionsButton.type = 'button';
+    regionsButton.textContent = p.regions?.length ? 'Regions (' + p.regions.length + ')' : 'Select regions';
+    regionsButton.setAttribute('aria-label', regionsButton.textContent + ' — ' + p.label);
+    regionsButton.disabled = running || editingRegions;
+    regionsButton.onclick = () => selectRegions(p);
+    d.append(regionsButton);
     d.dataset.pid = p.id;
     if (p.thumbUrl) d.querySelector('img').src = p.thumbUrl;
     else if (p.pdf) { if (thumbObs) thumbObs.observe(d); else { thumbQ.push(p); thumbWork(); } }
@@ -54,7 +63,8 @@ function renderThumbs() {
 }
 function updateRunBtn() {
   const todo = pages.filter(p => p.status !== 'done').length;
-  $('#btnRun').disabled = running || !todo;
+  $('#btnRun').disabled = running || busyAdding || editingRegions || !todo;
+  thumbs.querySelectorAll('.regions').forEach(b => { b.disabled = running || editingRegions; });
   $('#btnRun').textContent = !todo && pages.length ? 'All pages read ✓' : todo && pages.some(p => p.status === 'done') ? `Read ${todo} remaining page${todo > 1 ? 's' : ''}` : `Start OCR${pages.length ? ` (${pages.length} page${pages.length > 1 ? 's' : ''})` : ''}`;
   $('#btnRetryFailed').classList.toggle('hidden', running || !pages.some(p => p.status === 'err'));
   if (!running) {
@@ -108,7 +118,7 @@ async function pdfCleanup(doc) { try { await doc.cleanup(); } catch (e) { /* bus
 
 const fileQueue = []; let pdfPending = null; let busyAdding = false;
 async function handleFiles(list) {
-  fileQueue.push(...list); if (busyAdding) return; busyAdding = true;
+  fileQueue.push(...list); if (busyAdding) return; busyAdding = true; updateRunBtn();
   try {
     while (fileQueue.length) {
       const f = fileQueue.shift();
@@ -170,6 +180,28 @@ async function pageJpeg(p) {
   return p.blob;
 }
 
+async function selectRegions(p) {
+  if (running || editingRegions) return;
+  editingRegions = true; updateRunBtn();
+  let preview;
+  try {
+    // PDF thumbnails are too small to mark individual lines. Render just the selected page.
+    if (p.pdf && !p.url) preview = URL.createObjectURL(await renderPdfPage(p.pdf, p.pdfPage, PREVIEW_SIDE));
+    if (!pages.includes(p)) return;
+    const selection = await editRegions(p, preview || p.url);
+    if (!pages.includes(p) || !selection || JSON.stringify(selection) === JSON.stringify(p.regions || [])) return;
+    if (p.edited && !confirm('Change the reading regions and discard the edited transcript for this page?')) return;
+    p.regions = selection; p.status = 'new'; p.edited = false; p.text = ''; p.shown = ''; p.regionScripts = [];
+    renderResults(); setBar(); status('Regions saved for ' + p.label + '. Press Start OCR to read the page.');
+  } catch (error) {
+    status('Could not open the region editor: ' + error.message, 'err');
+  } finally {
+    if (preview) URL.revokeObjectURL(preview);
+    editingRegions = false; renderThumbs(); updateRunBtn();
+    thumbs.querySelector(`[data-pid="${p.id}"] .regions`)?.focus();
+  }
+}
+
 const drop = $('#drop');
 $('#fileInput').onchange = e => { handleFiles([...e.target.files]); e.target.value = ''; };
 $('#camInput').onchange = e => { handleFiles([...e.target.files]); e.target.value = ''; };
@@ -208,17 +240,36 @@ async function ocrPage(p, idx) {
   let c;
   try {
     c = await pageCanvas(p); await keepPreview(p, c); freeFull(p);
-    const r = await enginePage(c, { script: settings.script, binarize: settings.binarize, straighten: settings.straighten, clean: settings.clean !== false,
-      onStatus: t => status(`Page ${idx + 1} of ${pages.length}: ${t}${eta}`) });
+    const options = { script: settings.script, binarize: settings.binarize, straighten: settings.straighten,
+      clean: settings.clean !== false, onStatus: t => status(`Page ${idx + 1} of ${pages.length}: ${t}${eta}`) };
+    const r = p.regions?.length ? await readRegions(c, p, options) : await enginePage(c, options);
     p.text = r.text; p.model = 'engine'; p.status = 'done'; p.edited = false; p.notes = r.steps; p.changes = r.changes.map(c => ({ ...c, why: 'word list' }));
     p.raw = r.raw; p.lead = r.lead;
   } catch (e) { console.error(e); p.status = 'err'; p.error = 'Could not read this page: ' + (e.message || e); }
   finally { if (c) c.width = c.height = 0; }
 }
 
+async function readRegions(pageCanvas, page, options) {
+  const texts = [], rawTexts = [], steps = [], changes = [], scripts = [];
+  for (const [i, region] of page.regions.entries()) {
+    const crop = cropRegion(pageCanvas, region);
+    const heading = regionHeading(region, i);
+    try {
+      const result = await enginePage(crop, { ...options, singleBlock: true, script: regionScript(region, options.script),
+        onStatus: msg => options.onStatus(`Region ${i + 1}/${page.regions.length} · ${msg}`) });
+      texts.push(heading + '\n' + result.text); rawTexts.push(heading + '\n' + result.raw);
+      steps.push(...result.steps.map(note => `Region ${i + 1}: ${note}`));
+      changes.push(...result.changes);
+      scripts.push(/rashi/.test(result.lead) ? 'rashi' : 'square');
+    } finally { crop.width = crop.height = 0; }
+  }
+  page.regionScripts = scripts;
+  return { text: texts.join('\n\n'), raw: rawTexts.join('\n\n'), steps, changes };
+}
+
 function fmtMin(s) { return s < 90 ? `${Math.max(1, Math.round(s))} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`; }
 async function run(onlyFailed = false) {
-  if (running) return; running = true; stopFlag = false;
+  if (running || busyAdding || editingRegions) return; running = true; stopFlag = false;
   $('#btnStop').classList.remove('hidden'); updateRunBtn();
   $('#resultsCard').classList.remove('hidden');
   const todo = pages.filter(p => onlyFailed ? p.status === 'err' : p.status !== 'done');
@@ -257,6 +308,7 @@ function renderResults() {
       <div class="imgbox"><img alt="Page image" loading="lazy"></div><div class="tx"></div>`;
     d.querySelector('b').textContent = `Page ${i + 1} — ${p.label}`;
     d.querySelector('.tag').textContent = p.status === 'done' ? 'read with ' + (p.lead && /rashi/.test(p.lead) ? 'the Rashi model' : p.lead ? 'the Hebrew model' : 'our trained models') : p.status === 'run' ? 'reading…' : 'failed';
+    if (p.status === 'done' && p.regions?.length) d.querySelector('.tag').textContent = p.regions.length + (p.regions.length === 1 ? ' selected region' : ' selected regions');
     const img = d.querySelector('img'); img.src = p.url || p.thumbUrl || ''; img.onclick = () => { $('#zoomImg').src = p.url || p.thumbUrl; $('#zoom').showModal(); };
     const tx = d.querySelector('.tx');
     if (p.status === 'done' || p.status === 'run') {
@@ -278,7 +330,7 @@ function renderResults() {
       tx.innerHTML = '<div class="err-box"></div>'; tx.firstChild.textContent = '⚠ ' + (p.error || 'Failed');
       d.querySelector('.cp').classList.add('hidden');
     }
-    d.querySelector('.rt').onclick = async () => { if (running) return; p.status = 'new'; p.edited = false; running = true; stopFlag = false; const r = await ocrPage(p, i); running = false; renderThumbs(); renderResults(); setBar(); updateRunBtn(); if (p.status === 'done') status(`Page ${i + 1} read again.`, 'ok'); else status(p.error, 'err'); };
+    d.querySelector('.rt').onclick = async () => { if (running || editingRegions) return; p.status = 'new'; p.edited = false; running = true; stopFlag = false; const r = await ocrPage(p, i); running = false; renderThumbs(); renderResults(); setBar(); updateRunBtn(); if (p.status === 'done') status(`Page ${i + 1} read again.`, 'ok'); else status(p.error, 'err'); };
     box.appendChild(d);
   });
 }
@@ -301,18 +353,30 @@ $('#zoomClose').onclick = () => $('#zoom').close();
 let pdfLibLoading;
 function loadPdfLib() { return pdfLibLoading ||= new Promise((res, rej) => { if (window.PDFLib) return res(window.PDFLib); const s = document.createElement('script'); s.src = 'vendor/pdf-lib.min.js'; s.onload = () => res(window.PDFLib); s.onerror = rej; document.head.appendChild(s); }); }
 $('#btnPdf').onclick = async e => {
-  const done = pages.filter(p => p.status === 'done'); if (!done.length || running) return;
+  const done = pages.filter(p => p.status === 'done'); if (!done.length || running || editingRegions) return;
   const btn = e.target; btn.disabled = true; running = true;
   try {
     const { PDFDocument } = await loadPdfLib(); const out = await PDFDocument.create();
     for (let i = 0; i < done.length; i++) {
       status(`Making the searchable PDF: page ${i + 1} of ${done.length}…`);
       const pc = await pageCanvas(done[i]); freeFull(done[i]);
-      const bytes = await pdfPageBytes(pc, settings.script, t => status(t)); pc.width = pc.height = 0;
-      const one = await PDFDocument.load(bytes); const cp = await out.copyPages(one, one.getPageIndices()); cp.forEach(pg => out.addPage(pg));
+      const page = done[i];
+      try {
+        const selections = page.regions?.length ? page.regions : [null];
+        for (const [j, region] of selections.entries()) {
+          const src = region ? cropRegion(pc, region) : pc;
+          try {
+            const script = region ? page.regionScripts[j] : settings.script;
+            const bytes = await pdfPageBytes(src, script, t => status(t), Boolean(region));
+            const one = await PDFDocument.load(bytes);
+            const copies = await out.copyPages(one, one.getPageIndices());
+            copies.forEach(pg => out.addPage(pg));
+          } finally { if (region) src.width = src.height = 0; }
+        }
+      } finally { pc.width = pc.height = 0; }
     }
     download(await out.save(), `hebrew-ocr-${stamp()}.pdf`, 'application/pdf');
-    status(`Searchable PDF ready (${done.length} page${done.length > 1 ? 's' : ''}). Its hidden text layer comes from our trained models.`, 'ok');
+    status(`Searchable PDF ready (${out.getPageCount()} page${out.getPageCount() > 1 ? 's' : ''}). Its hidden text layer comes from our trained models.`, 'ok');
   } catch (err) { console.error(err); status('Could not make the PDF: ' + (err.message || err), 'err'); }
   finally { btn.disabled = false; running = false; updateRunBtn(); }
 };

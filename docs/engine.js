@@ -243,10 +243,10 @@ async function fillGaps(wk, cc, L, bands) {
 }
 
 // OCR one page. script: 'square' | 'rashi' | 'mixed'. Returns { text, changes, steps, models, perModel }
-export async function enginePage(srcCanvas, { script = 'mixed', binarize = 'auto', straighten = true, clean = true, onStatus } = {}) {
+export async function enginePage(srcCanvas, { script = 'mixed', binarize = 'auto', straighten = true, clean = true, singleBlock = false, onStatus } = {}) {
   const say = t => onStatus && onStatus(t);
   say('Engine: cleaning up the page image…');
-  let pp = preprocess(srcCanvas, { script, binarize, straighten, clean });
+  let pp = preprocess(srcCanvas, { script, binarize, straighten, clean, columns: !singleBlock });
   const langs = script === 'square' ? [L_SQ] : script === 'rashi' ? [L_RASHI, L_SQ] : [L_SQ, L_RASHI];
   await loadWords().catch(() => null);
   const USE_LM = !(typeof window !== 'undefined' && window.__HOCR_NOLM);
@@ -255,7 +255,7 @@ export async function enginePage(srcCanvas, { script = 'mixed', binarize = 'auto
   const readAll = async img => { const res = {}; const refilled = {};
   for (const lang of langs) {
     const wk = await getWorker(lang, say);
-    await wk.setParameters({ tessedit_pageseg_mode: '4' });
+    await wk.setParameters({ tessedit_pageseg_mode: singleBlock ? '6' : '4' });
     res[lang] = [];
     for (let i = 0; i < pp.cols.length; i++) {
       say(`Engine: reading ${pp.cols.length > 1 ? `column ${i + 1} of ${pp.cols.length} ` : ''}with the ${lang === L_SQ ? 'Hebrew' : 'Rashi'} model…`);
@@ -272,7 +272,7 @@ export async function enginePage(srcCanvas, { script = 'mixed', binarize = 'auto
   if (pp.sharpened) {
     const massR = R => Math.max(...langs.map(l => dictMass(R[l].flat().filter(x => !x.para).map(x => x.text).join(' '))));
     say('Engine: blurry scan, comparing with an unsharpened reading…');
-    const pS = pp; pp = preprocess(srcCanvas, { script, binarize, straighten, clean, noSharp: true });
+    const pS = pp; pp = preprocess(srcCanvas, { script, binarize, straighten, clean, columns: !singleBlock, noSharp: true });
     const R0 = await readAll(USE_GRAY ? pp.gray : pp.bin);
     if (massR(R0.res) >= massR(res)) { res = R0.res; refilled = R0.refilled; } else pp = pS;
   }
@@ -313,12 +313,12 @@ export async function enginePage(srcCanvas, { script = 'mixed', binarize = 'auto
 }
 
 // searchable PDF page: page image + invisible text layer, made by Tesseract's own PDF writer
-export async function pdfPageBytes(srcCanvas, script = 'mixed', onStatus) {
+export async function pdfPageBytes(srcCanvas, script = 'mixed', onStatus, singleBlock = false) {
   const pp = preprocess(srcCanvas, { script, columns: false, clean: false, noSharp: true });
   // keep the PDF light: page image at most 2000 px on the long side
   const s = Math.min(1, 2000 / Math.max(pp.w, pp.h)); const img = s < 1 ? canvasFrom(pp.gray, Math.round(pp.w * s), Math.round(pp.h * s)) : pp.gray;
   const lang = script === 'square' ? L_SQ : script === 'rashi' ? L_RASHI : L_SQ;
-  const wk = await getWorker(lang, onStatus); await wk.setParameters({ tessedit_pageseg_mode: '3' });
+  const wk = await getWorker(lang, onStatus); await wk.setParameters({ tessedit_pageseg_mode: singleBlock ? '6' : '3' });
   // a JPEG input is embedded as-is by Tesseract's PDF writer: pages stay small
   const jpg = await new Promise(r => img.toBlob(r, 'image/jpeg', 0.82));
   const { data } = await wk.recognize(jpg, { pdfTitle: 'Hebrew OCR' }, { pdf: true, text: false, blocks: false });

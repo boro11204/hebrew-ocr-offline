@@ -1,9 +1,207 @@
-Model files. heb_rashi7.traineddata is the default Rashi model (heb_rashi6, heb_rashi5 and heb_rashi4 stay selectable with --rashi-model or HEBOCR_RASHI); heb4.traineddata is the square-script model. The bigger files are added by the GitHub Actions in .github/workflows/ (fetch-models*.yml, each SHA-256 checked). See the main README for licenses.
+# hebrew-ocr-offline
 
-`vilna_rashi_trial.traineddata` is an optional Vilna Rashi model for the command line. It derives from `heb_rashi7` and ultimately from the Apache-2.0 `heb_rashi` model by Zeev Pekar / pninim.org, copyright 2021. In November 2026 it was fine-tuned for 300 iterations on 229 Rashi line images from Berakhot 3a–6b, using E-Daf scans and labels aligned with Sefaria's Vilna Edition. Its SHA-256 is `5e70d1f0001d3f308e9f22af6eb9f7f2eb9af784584e5638ac43558aa65dd2bd`.
+Free, offline Hebrew OCR for printed seforim, in **square script and Rashi script**, plus a **proofreading tool** that compares a typed text with the original scan. No AI, no API key, no internet needed once installed. It runs on your own computer.
 
-On four hand-checked passages from Berakhot 8a–8b, native Tesseract in block mode (PSM 6) made 25 Hebrew-letter errors in 554 letters with `heb_rashi7` and 12 with the trial model. The four passage counts went from 12 to 6, 7 to 6, 6 to 0, and 0 to 0. These pages were held out of the edition fine-tuning. The original model's complete training-page inventory is unavailable. This small test covers one printed edition.
+It also powers the "Engine" mode of the Hebrew OCR website: https://hebrew-ocr.sites.tab.bot (also at https://boro11204.github.io/hebrew-ocr/).
+
+## What is in here
+
+| Folder | What it is |
+|---|---|
+| `models/heb_rashi4.traineddata` | Tesseract model for **Rashi script**, fine-tuned on about 7,900 real printed lines |
+| `models/heb_rashi7.traineddata` | newest **Rashi script** model (v8, Nov 10, 2026), the one the website and the command line use; see "v8" below |
+| `models/heb_rashi6.traineddata` | previous Rashi model (v6), still selectable with `--rashi-model heb_rashi6` |
+| `models/heb4.traineddata` | Tesseract model for **square script** (Gemara, sefarim), fine-tuned on real printed lines |
+| `lm/` | word and word-pair counts from 8.5 million words of Sefaria's open Hebrew texts (spelling fixes and "is this a real word" checks) |
+| `hebocr/` | the Python program: `engine.py` (OCR), `proofread.py` (compare), `corrector.py` (optional spelling fix) |
+| `training/` | the scripts used to build the training lines and train the models, for anyone who wants to train more |
+
+The two model files are added to the repo by a small GitHub Action (`.github/workflows/fetch-models.yml`). It copies them from the website and checks their SHA-256, because they are too big for the uploader we used. If `models/` is empty right after you clone, wait a minute and pull again, or download them yourself (see "Install").
+
+## Install
+
+You need Python 3.9 or newer and Tesseract 5.
+
+```
+# Ubuntu / Debian
+sudo apt-get install tesseract-ocr
+# macOS
+brew install tesseract
+# Windows: install Tesseract from https://github.com/UB-Mannheim/tesseract/wiki
+
+pip install -r requirements.txt
+```
+
+If the model files are missing:
+
+```
+curl -L -o models/heb_rashi4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi4.traineddata
+curl -L -o models/heb_rashi7.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi7.traineddata
+curl -L -o models/heb_rashi6.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb_rashi6.traineddata
+curl -L -o models/heb4.traineddata https://hebrew-ocr.sites.tab.bot/tessdata/heb4.traineddata
+```
+
+## Use it
+
+### Read separate passages on a daf in the browser
+
+Add a scan or PDF, then click **Select regions** under its thumbnail. Choose **Gemara**, **Rashi**, **Tosafos**, or the page's script setting and draw a box around one passage. If a commentary wraps around the main text, mark each rectangular piece separately. Move the boxes up or down into reading order, click **Save regions**, then **Start OCR**. Saving an empty list restores automatic full-page reading.
+
+The transcript, TXT, and Word exports keep the numbered passages together. A searchable PDF contains one cropped page per box in that order. Pages without boxes export as full pages.
+
+### Read a scan from the command line
+
+Run these from this folder.
+
+**Read a scan into text**
+
+```
+python3 -m hebocr ocr page.jpg --script rashi --out page.txt
+python3 -m hebocr ocr book.pdf --pages 1-10 --script square --layout columns --out book.txt
+```
+
+- `--script`: `rashi`, `square`, or `auto` (tries both, line by line).
+- `--layout`: `columns` for two-column pages, `block` for one column, `auto` to let Tesseract decide.
+- `--rashi-model`: which Rashi model to use (default `heb_rashi7`; `heb_rashi6` and older still work). Same as setting `HEBOCR_RASHI`.
+- `--correct`: turns on the word-list spelling fix. It helps a little on square script and does about nothing on Rashi, so it is off by default.
+
+**Proofread a typed text against the scan**
+
+```
+python3 -m hebocr proofread typed.docx scan.pdf --pages 15-30 --out report
+```
+
+The typed file can be `.txt`, `.docx` or `.pdf`. This writes:
+
+- `report.html`: the typed text with colors. Click a mark to see the scan line it came from.
+  - Yellow = changed word, more sure.
+  - Orange = changed word, worth checking.
+  - Red crossed out = typed words that are not in the scan.
+  - **[חסר: …]** = words in the scan that are missing from the typed text.
+- `report.docx`: the same marks in Word.
+- `report.json`: every flag with its confidence (0 to 1).
+
+How it works:
+
+1. It reads each scan page 3 times at different sizes (`--passes`). The readings vote.
+2. It finds where the page sits in the typed text.
+3. It lines up the words, while understanding abbreviations (כמ״ש = כמו שכתב, ביהכ״פ = ביום הכיפורים, וכו׳ = וכולי), spelling with or without ו/י, and words split or joined.
+4. It ignores punctuation, (sources in round brackets), [editor additions in square brackets] and editor headings.
+5. Each difference gets a confidence score built from:
+   - how many readings agree;
+   - Tesseract's own confidence;
+   - whether the scan word is a real word;
+   - whether the change looks like a typical OCR mix-up **for this scan** (it learns the scan's habits from the document itself);
+   - whether the text was only moved somewhere else.
+
+Use `--sure` and `--check` to change how many flags you see.
+
+## How good is it? (honest numbers)
+
+Every test below used pages that were never used in training. "Wrong letters" is the character error rate: lower is better.
+
+**OCR: Vilna Shas, Rosh Hashana 2a (answer key checked by hand)**
+
+| Test | Before (stock models) | After (these models) |
+|---|---|---|
+| Rashi column crop, website Engine mode | 32.1% | **16.4%** |
+| Square Gemara crop, website Engine mode | 5.8% | **4.1%** |
+| Rashi column crop, command line, the training worker's own crop | 23.5% | **9.3%** |
+| Square crop, command line | 6.2% | **3.9%** |
+| Full Berakhot page (layout + OCR), Rashi part | 45% | **17%** |
+| Full Berakhot page, Tosafot part | 14% | **8%** |
+
+The site numbers above were measured with the same test script before and after. The site's earlier report of "Rashi 20%, square 4.3%" came from its own test settings, so it is not directly comparable. On the small low-resolution Rashi crop used by the site, the command line gets about 18%.
+
+For comparison, a good AI reader (Gemini) gets about 1–2% on the same Rashi crop. **Offline OCR on Rashi script is much better than before, but still far behind AI.**
+
+**Proofreading:**
+
+- Typed: Teshuvah MeAhavah vol. 2, Mechon Netzach Yakov edition. Scan: Prague 1815 printing.
+- Ten held-out pages, compared with an earlier careful AI proofread of the same pages: 66 marks on those pages.
+- The scoring was tuned on 5 of the pages (15, 35, 55, 75, 95) and tested on the other 5 (25, 45, 65, 85, 105):
+
+| Test pages | Flags per page | Share of flags that the AI proofread also marked (precision) | Share of the AI's marks it found (recall) |
+|---|---|---|---|
+| "to check" level (orange + yellow) | about 18 | 12% | 38% |
+| "sure" level (yellow only) | about 4 | 18% | 15% |
+
+Why it is weak on this book: the offline OCR reads only about 74% of the words on this 1815 Rashi-script print exactly right. Many of its flags are reading mistakes, not typing mistakes. Some flags may be real differences that the AI proofread missed; we did not check those by hand.
+
+**Bottom line:**
+
+- On clean square-script print, the proofreader is a useful first pass.
+- On old Rashi script, treat it as a rough helper and always look at the scan picture next to each flag.
+- It does not replace a human or AI proofreader.
+
+## Licenses and credits
+
+- **Code** in this repo: Apache License 2.0 (see `LICENSE`).
+- **models/heb_rashi4.traineddata**:
+  - Fine-tuned from **heb_rashi** by **Zeev Pekar / pninim.org** (https://gitlab.com/pninim.org/tessdata_heb_rashi), Copyright 2021 Zeev Pekar, Apache License 2.0.
+  - Changed by further training (Nov 2026).
+- **models/heb4.traineddata**:
+  - Fine-tuned from Google's **tessdata_best** `heb` (https://github.com/tesseract-ocr/tessdata_best), Apache License 2.0.
+  - Changed by further training (Nov 2026).
+- **Training images** were cut from public-domain scans:
+  - the Vilna Shas, Romm edition reprint of 1925, from the Internet Archive (archive.org);
+  - *Teshuvah MeAhavah*, Prague 1815.
+- **Training labels and the `lm/` word counts** come from texts on **Sefaria** (https://www.sefaria.org):
+  - Talmud Bavli, Rashi and Tosafot, mostly the Vilna / Wikisource Hebrew versions;
+  - more open rabbinic texts.
+  - The classic texts are public domain. Each Sefaria version has its own license (public domain or Creative Commons, for example CC-BY-SA for Wikisource texts), listed on its page on Sefaria.
+  - `lm/` holds only word counts made from those texts.
+- **Tesseract OCR** (https://github.com/tesseract-ocr/tesseract), Apache License 2.0. It is used as a program and is not included here.
+- **Python libraries:** Pillow, NumPy, OpenCV, RapidFuzz, PyMuPDF and python-docx. Each has its own license.
+
+## Train more
+
+### Train on an individual sefer
+
+`training/train_sefer.py` fine-tunes a model for one printed edition. Install the Python requirements above and the Tesseract 5 training tools (`combine_tessdata` and `lstmtraining`). Start from a trainable model such as `models/heb_rashi7.traineddata`.
+
+Crop individual printed lines and transcribe each in normal Hebrew reading order. Under `my_sefer/`, create `train/`, `validation/`, and `test/`. Inside each, group the lines by source page. For example, `train/page-012/line-03.png` goes beside `train/page-012/line-03.gt.txt`. Use each source page in only one group. Reserve fresh pages for an independent check if you tune the settings repeatedly.
 
 ```sh
-python3 -m hebocr ocr rashi-column.png --script rashi --layout block --rashi-model vilna_rashi_trial
+python3 training/train_sefer.py --base models/heb_rashi7.traineddata --data my_sefer --output models/my_sefer.traineddata
+python3 -m hebocr ocr column.png --script rashi --layout block --rashi-model my_sefer
 ```
+
+The trainer reports Hebrew-letter insertions, deletions, and substitutions for the starter and candidate. It saves the candidate to the new filename only when errors decrease on both reserved groups. It keeps final letter forms distinct and ignores spacing, punctuation, and niqqud.
+
+To try the included Vilna Rashi model on a cropped passage, use `--script rashi --layout block --rashi-model vilna_rashi_trial` with the OCR command. [Model details and test results](models/README.md).
+
+### Original training scripts
+
+`training/` holds the scripts that were used. They are written for the machine they ran on, so you will need to change the paths:
+
+- `mk_vilna.py` / `mk_prague.py`: cut line images from scans and match each line to its known text.
+- `gen_lstmf.py`, `train.sh`: Tesseract `lstmtraining` fine-tuning (about 8,000–11,000 iterations).
+- `build_lm.py`: build the word counts.
+- `harness.py`: the error-rate measure used for every number above.
+
+
+## v5 (Nov 9, 2026): worn-print Rashi model + Sefaria word model
+- `models/heb_rashi5.traineddata` (added by the fetch workflow): hr3 fine-tuned 35,000 more iterations on ~16.7k real Prague 1815 and Vilna Rashi lines, each also in 2 artificially worn copies (`training/aug2_worn.py`: about 20 kinds of wear — ink bleed, broken strokes, erosion/dilation, blur, noise, uneven light, foxing, stains with tide lines, bleed-through, scratches, press slur, skew, warp and more). Test pages were kept out.
+- `lm/sefaria_lm_words.txt`, `lm/sefaria_lm_bigrams.txt`: word and word-pair counts from public Sefaria texts (Rosh Hashana and Berakhot left out), used to re-score look-alike letters after OCR. No source text is looked up.
+- Rosh Hashana 2a test crops, browser engine: Rashi 16.4% → 14.6% wrong letters, square 4.1% → 2.8%.
+
+## v7 (Nov 10, 2026): page cleanup on the website
+- The website (https://hebrew-ocr.sites.tab.bot) now cleans each page before reading it: it finds the main text block and its columns and drops running headers, page numbers, catchwords, margin notes and specks. It is on by default and can be turned off with the "Page cleanup" checkbox. The code is `layout.js` in the boro11204/hebrew-ocr repo. It never looks up the source text.
+- The models here are unchanged; `heb_rashi6` is still the Rashi model.
+- New test: 10 full pages of the Prague 1815 print never used in training (about 39,000 letters). Rashi mode: 52.4% → 2.2% wrong letters; Auto mode 59.4% → 9.3% (before, most of these two-column pages were read straight across both columns). Square test unchanged at 2.8%.
+
+## v6 (Nov 10, 2026): look-alike Rashi letters
+- `models/heb_rashi6.traineddata` (added by the fetch workflow `fetch-models-v6.yml`; the website now uses it for Rashi and Auto mode): `heb_rashi5` fine-tuned on the Rashi letters it mixed up most (ב/כ, ת/ש/ט, ן/ך, כ/נ, ג/נ and others): real Prague 1815 lines weighted toward those letters, synthetic minimal-pair words in Rashi fonts with wear aimed at the strokes that tell them apart, then a low-rate pass on 2,496 extra real Vilna lines so the rest of the alphabet holds. Test pages were kept out.
+- Rosh Hashana 2a test crops, browser engine with the word model: Rashi 14.6% → 11.1% wrong letters (Auto mode 14.6% → 11.8%), square unchanged at 2.8%. Held-out real lines: 2.74% → 2.69%.
+
+## v8: heb_rashi7 (Nov 10, 2026)
+- `models/heb_rashi7.traineddata` (added by the fetch workflow `fetch-models-v8.yml`, SHA-256 checked): `heb_rashi6` fine-tuned on 24,013 new Vilna Shas Rashi/Tosafot lines (Rashi/Rashbam 12,472, Tosafot 11,541, from 310 pages of the 1882 and 1925 Romm printings, 31 tractates), labelled from Sefaria and checked line by line. Test pages were kept out.
+- The website now uses it for Rashi and Auto mode, and so does this command-line tool. `heb_rashi6` is still here: `--rashi-model heb_rashi6` (or `HEBOCR_RASHI=heb_rashi6`) switches back.
+- 10 Prague 1815 test pages never used in training, website with page cleanup, Rashi mode: 2.15% → 2.00% wrong letters. Old Rosh Hashana 2a crop, Rashi mode: 10.56% → 9.65%. Nothing got worse.
+
+## v9 (Nov 11, 2026): OCR web page with our trained models only
+
+https://boro11204.github.io/hebrew-ocr-offline/ is now a working OCR page that uses **only the trained models in this repo**: no AI, no API key, and no requests to any other site. It runs entirely in the browser (Tesseract.js with `heb_rashi7` for Rashi script and `heb4` for square letters, plus the Sefaria word lists). Pick **Auto / Rashi / Square** at the top, add a photo or PDF, and copy or download the text (TXT, Word or searchable PDF). The download page for this command-line tool moved to https://boro11204.github.io/hebrew-ocr-offline/offline.html.
+
+The page lives in `docs/`. Its big files (the models, the word lists and the two Tesseract engine files) are copied into `docs/` by `.github/workflows/fetch-site-v9.yml`, which checks every file's SHA-256.
