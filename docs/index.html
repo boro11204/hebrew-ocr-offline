@@ -9,7 +9,7 @@
 <meta property="og:description" content="Photo or PDF in, Hebrew text out. Runs entirely in your browser with our trained models. No AI, no API key.">
 <meta name="theme-color" content="#1f3a5f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f3a5f'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle' fill='%23f4d58d' font-family='serif'%3E%D7%90%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 <header class="top">
@@ -144,8 +144,27 @@
   <p>Engine: <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> (Apache 2.0) with our fine-tuned models (Nov 2026, trained on real printed lines from public-domain Vilna and Prague scans; code, models and test numbers at <a href="https://github.com/boro11204/hebrew-ocr-offline" target="_blank" rel="noopener">hebrew-ocr-offline</a>): heb_rashi7 for Rashi script, from the <a href="https://gitlab.com/pninim.org/tessdata_heb_rashi" target="_blank" rel="noopener">heb_rashi</a> model by Zeev Pekar / pninim.org, and heb4 for square letters, from tessdata_best <code>heb</code> (both Apache 2.0), plus pninim.org's word list and a word-frequency list built from Sefaria's open texts. PDF reading by pdf.js (Apache 2.0), PDF writing by pdf-lib (MIT); iPhone HEIC photos by heic2any (MIT). Thanks to the ivelt.com member “שטאלץ צו זיין א איד”, whose free OCR page (March 2026) gave the idea of listing every automatic fix.</p>
 </footer>
 
+<dialog id="regionDialog" aria-labelledby="regionTitle">
+  <h2 id="regionTitle">Reading regions</h2>
+  <p id="regionPage"></p>
+  <p>Choose the type of text, then drag a box around one block. Boxes are read in numbered order. Leave the list empty to read the whole page. Searchable PDF exports one page per selected box.</p>
+  <label>Next region <select id="regionType"><option value="auto">Use page script</option><option value="gemara">Gemara · square</option><option value="rashi">Rashi</option><option value="tosafos">Tosafos · Rashi script</option></select></label>
+  <div id="regionStage"><img id="regionImage" alt="Source page for drawing reading regions" draggable="false"><div id="regionBoxes"></div></div>
+  <details><summary>Enter box coordinates</summary>
+    <form id="regionCoords">
+      <label>Left % <input name="left" type="number" min="0" max="100" step="any" required></label>
+      <label>Top % <input name="top" type="number" min="0" max="100" step="any" required></label>
+      <label>Right % <input name="right" type="number" min="0" max="100" step="any" required></label>
+      <label>Bottom % <input name="bottom" type="number" min="0" max="100" step="any" required></label>
+      <button class="ghost small">Add box</button>
+    </form>
+  </details>
+  <p id="regionMsg" role="status"></p>
+  <ol id="regionOrder" aria-label="Reading order"></ol>
+  <div class="row"><button id="regionSave" class="primary">Save regions</button><button id="regionCancel" class="ghost">Cancel</button></div>
+</dialog>
 <dialog id="zoom"><img id="zoomImg" alt="Page"><button id="zoomClose" class="primary small">Close</button></dialog>
-<script type="module" src="app.js?v=14"></script>
+<script type="module" src="app.js?v=15"></script>
 <script type="module" src="compare.js?v=14"></script>
 </body>
 </html>
